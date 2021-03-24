@@ -7,11 +7,6 @@ if [[ ! -d .venv ]]; then
     python3 -m venv .venv
 fi
 source .venv/bin/activate
-if [[ -z $(pip list | grep "^pytest") ]]; then
-    pip install pytest
-fi
-if [[ -z $(pip list | grep "^hypothesis") ]]; then
-    pip install hypothesis
-fi
+pip install -r requirements-dev.txt
 python setup.py build install
 pytest
