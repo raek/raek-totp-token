@@ -17,6 +17,10 @@ def test_some_valid():
     assert datetime_to_unix_time(2009, 2, 13, 23, 31, 30) == 1234567890
 
 
+def test_last_valid():
+    assert datetime_to_unix_time(2106, 2, 7, 6, 28, 15) == 2**32 - 1
+
+
 @given(valid_unix_times)
 def test_any_valid(unix_time):
     dt = datetime.fromtimestamp(unix_time, tz=timezone.utc)
