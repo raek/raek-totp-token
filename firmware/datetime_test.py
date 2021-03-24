@@ -6,7 +6,7 @@ from hypothesis.strategies import integers
 from firmware import datetime_to_unix_time
 
 
-valid_unix_times = integers(min_value=0, max_value=(2^32-1))
+valid_unix_times = integers(min_value=0, max_value=(2**32-1))
 
 
 def test_epoch():
