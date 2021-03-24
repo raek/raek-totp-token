@@ -1,0 +1,45 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP AS1107WL-T
+D 8 -Digit LED Display Driver
+F https://ams.com/documents/20143/36005/AS1106-07_DS000171_1-00.pdf
+$ENDCMP
+#
+$CMP LDLN025M33R
+D 250 mA ultra low noise LDO
+$ENDCMP
+#
+$CMP MCP73831-2-OT
+D Single cell, Li-Ion/Li-Po charge management controller, 4.20V, Open-Drain Status Output, in SOT23-5 package
+K battery charger lithium
+F http://ww1.microchip.com/downloads/en/DeviceDoc/20001984g.pdf
+$ENDCMP
+#
+$CMP QDSP-6064
+D 7-segment 4-digt red LED bubble display
+K display LED 7-segment
+F https://cdn.sparkfun.com/datasheets/Components/LED/BB_QDSP_DS.pdf
+$ENDCMP
+#
+$CMP USB_C_Receptacle_USB2.0
+D USB 2.0-only Type-C Receptacle connector
+K usb universal serial bus type-C USB2.0
+F https://www.usb.org/sites/default/files/documents/usb_type-c.zip
+$ENDCMP
+#
+$CMP VBAT
+D Power symbol creates a global label with name "VBAT"
+K power-flag battery
+$ENDCMP
+#
+$CMP VBUS
+D Power symbol creates a global label with name "VBUS"
+K power-flag battery
+$ENDCMP
+#
+$CMP VPERI
+D Power symbol creates a global label with name "VBAT"
+K power-flag battery
+$ENDCMP
+#
+#End Doc Library

@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name totp)(type Legacy)(uri ${KIPRJMOD}/totp.lib)(options "")(descr ""))
+)
