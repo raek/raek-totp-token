@@ -5,8 +5,24 @@
 
 bool datetime_to_unix_time(UnixTime *out_unix_time, uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second)
 {
-    if (month < 1 || month > 12 || hour >= 24 || minute >= 60 || second >= 60) {
+    if (month < 1 || month > 12 || day < 1 || day > 31 ||
+        hour >= 24 || minute >= 60 || second >= 60) {
         return false;
+    }
+    if ((month == 4 || month == 6 || month == 9 || month == 11) &&
+        (day >= 31)) {
+        return false;
+    }
+    if (month == 2) {
+        if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
+            if (day >= 30) {
+                return false;
+            }
+        } else {
+            if (day >= 29) {
+                return false;
+            }
+        }
     }
     uint32_t myear = month <= 2 ? year - 1 : year;
     uint32_t era = myear / 400;
