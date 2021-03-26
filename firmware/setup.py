@@ -2,6 +2,9 @@ from distutils.core import setup, Extension
 
 firmware = Extension(
     "firmware",
+    define_macros=[
+        ("PY_SSIZE_T_CLEAN", None),
+    ],
     sources=[
         "firmware.c",
         "datetime.c",
