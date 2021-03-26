@@ -5,6 +5,9 @@
 
 bool datetime_to_unix_time(UnixTime *out_unix_time, uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second)
 {
+    if (month < 1 || month > 12) {
+        return false;
+    }
     uint32_t myear = month <= 2 ? year - 1 : year;
     uint32_t era = myear / 400;
     uint32_t year_of_era = myear % 400;

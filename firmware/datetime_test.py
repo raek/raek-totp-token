@@ -25,3 +25,8 @@ def test_last_valid():
 def test_any_valid(unix_time):
     dt = datetime.fromtimestamp(unix_time, tz=timezone.utc)
     assert datetime_to_unix_time(*dt.timetuple()[0:6]) == unix_time
+
+
+def test_invalid_month():
+    assert datetime_to_unix_time(2000, 0, 1, 0, 0, 0) == None
+    assert datetime_to_unix_time(2000, 13, 1, 0, 0, 0) == None
