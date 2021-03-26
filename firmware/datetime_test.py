@@ -131,3 +131,19 @@ def test_last_year(unix_time):
     else:
         assert not valid
         assert value == None
+
+
+@given(integers(min_value=1970, max_value=2105),
+       integers(min_value=1, max_value=12),
+       integers(min_value=28, max_value=31))
+def test_any_end_of_month(year, month, day):
+    valid = datetime_is_valid(year, month, day, 0, 0, 0)
+    value = datetime_to_unix_time(year, month, day, 0, 0, 0)
+    try:
+        dt = datetime(year, month, day, 0, 0, 0, tzinfo=timezone.utc)
+        unix_time = dt.timestamp()
+        assert valid
+        assert value == unix_time
+    except ValueError:
+        assert not valid
+        assert value == None
