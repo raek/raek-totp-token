@@ -3,7 +3,7 @@
 // Based on the beautifylly described algorithm by Howard Hinnant.
 // https://howardhinnant.github.io/date_algorithms.html
 
-UnixTime datetime_to_unix_time(uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second)
+bool datetime_to_unix_time(UnixTime *out_unix_time, uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second)
 {
     uint32_t myear = month <= 2 ? year - 1 : year;
     uint32_t era = myear / 400;
@@ -14,5 +14,6 @@ UnixTime datetime_to_unix_time(uint16_t year, uint8_t month, uint8_t day, uint8_
     uint32_t hours_since_epoch = (days_since_epoch*24) + hour;
     uint32_t minutes_since_epoch = (hours_since_epoch*60) + minute;
     uint32_t seconds_since_epoch = (minutes_since_epoch*60) + second;
-    return seconds_since_epoch;
+    *out_unix_time = seconds_since_epoch;
+    return true;
 }
