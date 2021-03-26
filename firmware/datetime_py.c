@@ -14,5 +14,9 @@ PyObject *datetime_to_unix_time_py(PyObject *self, PyObject *args)
     }
     UnixTime result = 0;
     bool ok = datetime_to_unix_time(&result, year, month, day, hour, minute, second);
-    return Py_BuildValue("Ol", ok ? Py_True : Py_False, (long) result);
+    if (ok) {
+        return PyLong_FromLong(result);
+    } else {
+        Py_RETURN_NONE;
+    }
 }
