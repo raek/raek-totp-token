@@ -5,7 +5,7 @@
 
 bool datetime_to_unix_time(UnixTime *out_unix_time, uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second)
 {
-    if (month < 1 || month > 12 || day < 1 || day > 31 ||
+    if (year < 1970 || year > 2106 || month < 1 || month > 12 || day < 1 || day > 31 ||
         hour >= 24 || minute >= 60 || second >= 60) {
         return false;
     }
@@ -21,6 +21,18 @@ bool datetime_to_unix_time(UnixTime *out_unix_time, uint16_t year, uint8_t month
         } else {
             if (day >= 29) {
                 return false;
+            }
+        }
+    }
+    if (year == 2106) {
+        uint8_t input_parts[] = {month, day, hour, minute, second};
+        uint8_t last_parts[] = {2, 7, 6, 28, 15};
+        for (int i = 0; i < 5; i++) {
+            if (input_parts[i] > last_parts[i]) {
+                return false;
+            }
+            if (input_parts[i] < last_parts[i]) {
+                break;
             }
         }
     }

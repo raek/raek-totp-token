@@ -71,3 +71,29 @@ def test_invalid_minute():
 
 def test_invalid_second():
     assert datetime_to_unix_time(2000, 1, 1, 0, 0, 60) == None
+
+
+def test_invalid_before_first_valid():
+    unix_time = -1
+    dt = datetime.fromtimestamp(unix_time, tz=timezone.utc)
+    assert datetime_to_unix_time(*dt.timetuple()[0:6]) == None
+
+
+def test_invalid_after_last_valid():
+    unix_time = 2**32
+    dt = datetime.fromtimestamp(unix_time, tz=timezone.utc)
+    assert datetime_to_unix_time(*dt.timetuple()[0:6]) == None
+
+
+last_year_beginning = datetime(2106, 1, 1, 0, 0, 0, tzinfo=timezone.utc).timestamp()
+last_year_end = datetime(2106, 12, 31, 23, 59, 59, tzinfo=timezone.utc).timestamp()
+
+
+@given(integers(min_value=last_year_beginning, max_value=last_year_end))
+def test_last_year(unix_time):
+    dt = datetime.fromtimestamp(unix_time, tz=timezone.utc)
+    value = datetime_to_unix_time(*dt.timetuple()[0:6])
+    if unix_time < 2**32:
+        assert value == unix_time
+    else:
+        assert value == None
