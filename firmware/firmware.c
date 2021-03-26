@@ -17,6 +17,7 @@ static FirmwareState *firmware_get_state(PyObject *module)
 }
 
 static PyMethodDef firmware_methods[] = {
+    {"datetime_is_valid", datetime_is_valid_py, METH_VARARGS, NULL},
     {"datetime_to_unix_time", datetime_to_unix_time_py, METH_VARARGS, NULL},
     {NULL, NULL, 0, NULL}
 };

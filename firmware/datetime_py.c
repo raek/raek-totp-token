@@ -6,6 +6,20 @@
 #include "datetime.h"
 #include "datetime_py.h"
 
+PyObject *datetime_is_valid_py(PyObject *self, PyObject *args)
+{
+    long int year, month, day, hour, minute, second;
+    if (!PyArg_ParseTuple(args, "llllll", &year, &month, &day, &hour, &minute, &second)) {
+        return NULL;
+    }
+    bool ok = datetime_is_valid(year, month, day, hour, minute, second);
+    if (ok) {
+        Py_RETURN_TRUE;
+    } else {
+        Py_RETURN_FALSE;
+    }
+}
+
 PyObject *datetime_to_unix_time_py(PyObject *self, PyObject *args)
 {
     long int year, month, day, hour, minute, second;

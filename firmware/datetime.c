@@ -1,9 +1,6 @@
 #include "datetime.h"
 
-// Based on the beautifylly described algorithm by Howard Hinnant.
-// https://howardhinnant.github.io/date_algorithms.html
-
-bool datetime_to_unix_time(UnixTime *out_unix_time, uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second)
+bool datetime_is_valid(uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second)
 {
     if (year < 1970 || year > 2106 || month < 1 || month > 12 || day < 1 || day > 31 ||
         hour >= 24 || minute >= 60 || second >= 60) {
@@ -35,6 +32,17 @@ bool datetime_to_unix_time(UnixTime *out_unix_time, uint16_t year, uint8_t month
                 break;
             }
         }
+    }
+    return true;
+}
+
+// Based on the beautifylly described algorithm by Howard Hinnant.
+// https://howardhinnant.github.io/date_algorithms.html
+
+bool datetime_to_unix_time(UnixTime *out_unix_time, uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second)
+{
+    if (!datetime_is_valid(year, month, day, hour, minute, second)) {
+        return false;
     }
     uint32_t myear = month <= 2 ? year - 1 : year;
     uint32_t era = myear / 400;
