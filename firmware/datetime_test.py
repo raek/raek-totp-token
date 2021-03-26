@@ -30,3 +30,15 @@ def test_any_valid(unix_time):
 def test_invalid_month():
     assert datetime_to_unix_time(2000, 0, 1, 0, 0, 0) == None
     assert datetime_to_unix_time(2000, 13, 1, 0, 0, 0) == None
+
+
+def test_invalid_hour():
+    assert datetime_to_unix_time(2000, 1, 1, 24, 0, 0) == None
+
+
+def test_invalid_minute():
+    assert datetime_to_unix_time(2000, 1, 1, 0, 60, 0) == None
+
+
+def test_invalid_second():
+    assert datetime_to_unix_time(2000, 1, 1, 0, 0, 60) == None
