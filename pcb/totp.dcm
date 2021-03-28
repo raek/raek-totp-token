@@ -9,6 +9,18 @@ $CMP LDLN025M33R
 D 250 mA ultra low noise LDO
 $ENDCMP
 #
+$CMP MAX14576
+F https://datasheets.maximintegrated.com/en/ds/MAX14576-MAX14637.pdf
+$ENDCMP
+#
+$CMP MAX14636
+F https://datasheets.maximintegrated.com/en/ds/MAX14576-MAX14637.pdf
+$ENDCMP
+#
+$CMP MAX14637
+F https://datasheets.maximintegrated.com/en/ds/MAX14576-MAX14637.pdf
+$ENDCMP
+#
 $CMP MCP73831-2-OT
 D Single cell, Li-Ion/Li-Po charge management controller, 4.20V, Open-Drain Status Output, in SOT23-5 package
 K battery charger lithium
