@@ -8,7 +8,7 @@
 PyObject *datetime_is_valid_py(PyObject *self, PyObject *args)
 {
     long int year, month, day, hour, minute, second;
-    if (!PyArg_ParseTuple(args, "llllll", &year, &month, &day, &hour, &minute, &second)) {
+    if (!PyArg_ParseTuple(args, "llllll:datetime_is_valid", &year, &month, &day, &hour, &minute, &second)) {
         return NULL;
     }
     bool ok = datetime_is_valid(year, month, day, hour, minute, second);
@@ -22,7 +22,7 @@ PyObject *datetime_is_valid_py(PyObject *self, PyObject *args)
 PyObject *datetime_to_unix_time_py(PyObject *self, PyObject *args)
 {
     long int year, month, day, hour, minute, second;
-    if (!PyArg_ParseTuple(args, "llllll", &year, &month, &day, &hour, &minute, &second)) {
+    if (!PyArg_ParseTuple(args, "llllll:datetime_to_unix_time", &year, &month, &day, &hour, &minute, &second)) {
         return NULL;
     }
     UnixTime result = 0;
