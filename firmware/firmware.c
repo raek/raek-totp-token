@@ -2,18 +2,7 @@
 
 #include <Python.h>
 
-#include "datetime_py.h"
-
-typedef struct {
-    int dummy;
-} FirmwareState;
-
-static FirmwareState *firmware_get_state(PyObject *module)
-{
-    FirmwareState *state = PyModule_GetState(module);
-    assert(state != NULL);
-    return state;
-}
+#include "firmware.h"
 
 static PyMethodDef firmware_methods[] = {
     {"datetime_is_valid", datetime_is_valid_py, METH_VARARGS, NULL},
