@@ -4,6 +4,13 @@
 
 #include "firmware.h"
 
+static FirmwareState *firmware_get_state(PyObject *module)
+{
+    FirmwareState *state = PyModule_GetState(module);
+    assert(state != NULL);
+    return state;
+}
+
 static PyMethodDef firmware_methods[] = {
     {"datetime_is_valid", datetime_is_valid_py, METH_VARARGS, NULL},
     {"datetime_to_unix_time", datetime_to_unix_time_py, METH_VARARGS, NULL},

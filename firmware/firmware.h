@@ -3,13 +3,8 @@
 #include <Python.h>
 
 typedef struct {
-    PyObject *pin_type_object;
-    PyObject *inverter_type_object;
+    int dummy;
 } FirmwareState;
 
 PyObject *datetime_is_valid_py(PyObject *self, PyObject *args);
 PyObject *datetime_to_unix_time_py(PyObject *self, PyObject *args);
-
-extern PyType_Spec pin_type_spec;
-
-extern PyType_Spec inverter_type_spec;
