@@ -4,13 +4,6 @@
 
 #include "firmware.h"
 
-static FirmwareState *firmware_get_state(PyObject *module)
-{
-    FirmwareState *state = PyModule_GetState(module);
-    assert(state != NULL);
-    return state;
-}
-
 static PyMethodDef firmware_methods[] = {
     {"datetime_is_valid", datetime_is_valid_py, METH_VARARGS, NULL},
     {"datetime_to_unix_time", datetime_to_unix_time_py, METH_VARARGS, NULL},
@@ -19,8 +12,50 @@ static PyMethodDef firmware_methods[] = {
 
 static int firmware_exec(PyObject *module)
 {
-    FirmwareState *state = firmware_get_state(module);
-    state->dummy = 0;
+    FirmwareState *state = PyModule_GetState(module);
+    if (state == NULL) {
+        return -1;
+    }
+    memset(state, 0, sizeof(*state));
+
+    state->pin_type_object = PyType_FromModuleAndSpec(module, &pin_type_spec, NULL);
+    if (state->pin_type_object == NULL) {
+        return -1;
+    }
+    if (PyModule_AddType(module, (PyTypeObject *) state->pin_type_object) < 0) {
+        return -1;
+    }
+
+    state->inverter_type_object = PyType_FromModuleAndSpec(module, &inverter_type_spec, NULL);
+    if (state->inverter_type_object == NULL) {
+        return -1;
+    }
+    if (PyModule_AddType(module, (PyTypeObject *) state->inverter_type_object) < 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+static int firmware_traverse(PyObject *module, visitproc visit, void *arg)
+{
+    FirmwareState *state = PyModule_GetState(module);
+    if (state == NULL) {
+        return 0;
+    }
+    Py_VISIT(state->pin_type_object);
+    Py_VISIT(state->inverter_type_object);
+    return 0;
+}
+
+static int firmware_clear(PyObject *module)
+{
+    FirmwareState *state = PyModule_GetState(module);
+    if (state == NULL) {
+        return 0;
+    }
+    Py_CLEAR(state->pin_type_object);
+    Py_CLEAR(state->inverter_type_object);
     return 0;
 }
 
@@ -36,8 +71,8 @@ static PyModuleDef firmware_module_def = {
     .m_size = sizeof(FirmwareState),
     .m_methods = firmware_methods,
     .m_slots = firmware_slots,
-    .m_traverse = NULL,
-    .m_clear = NULL,
+    .m_traverse = firmware_traverse,
+    .m_clear = firmware_clear,
     .m_free = NULL,
 };
 

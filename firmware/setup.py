@@ -9,6 +9,9 @@ firmware = Extension(
         "firmware.c",
         "datetime.c",
         "datetime_py.c",
+        "pin_py.c",
+        "inverter.c",
+        "inverter_py.c",
     ])
 
 setup(
