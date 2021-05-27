@@ -18,6 +18,8 @@ firmware = Extension(
         "pin_py.c",
         "inverter.c",
         "inverter_py.c",
+        "sha1.c",
+        "sha1_py.c",
     ])
 
 setup(

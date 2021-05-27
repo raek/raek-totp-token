@@ -34,6 +34,14 @@ static int firmware_exec(PyObject *module)
         return -1;
     }
 
+    state->sha1_type_object = PyType_FromModuleAndSpec(module, &sha1_type_spec, NULL);
+    if (state->sha1_type_object == NULL) {
+        return -1;
+    }
+    if (PyModule_AddType(module, (PyTypeObject *) state->sha1_type_object) < 0) {
+        return -1;
+    }
+
     return 0;
 }
 
@@ -45,6 +53,7 @@ static int firmware_traverse(PyObject *module, visitproc visit, void *arg)
     }
     Py_VISIT(state->pin_type_object);
     Py_VISIT(state->inverter_type_object);
+    Py_VISIT(state->sha1_type_object);
     return 0;
 }
 
@@ -56,6 +65,7 @@ static int firmware_clear(PyObject *module)
     }
     Py_CLEAR(state->pin_type_object);
     Py_CLEAR(state->inverter_type_object);
+    Py_CLEAR(state->sha1_type_object);
     return 0;
 }
 

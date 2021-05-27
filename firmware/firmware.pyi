@@ -24,3 +24,14 @@ class Inverter:
 
     def run(self) -> None:
         ...
+
+
+class Sha1:
+    def __init__(self) -> None:
+        ...
+
+    def update(self, data: bytes) -> None:
+        ...
+
+    def digest(self) -> bytes:
+        ...
