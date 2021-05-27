@@ -5,6 +5,12 @@ firmware = Extension(
     define_macros=[
         ("PY_SSIZE_T_CLEAN", None),
     ],
+    extra_compile_args=[
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-parameter",
+    ],
     sources=[
         "firmware.c",
         "datetime.c",
