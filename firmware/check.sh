@@ -11,4 +11,4 @@ pip install -r requirements-dev.txt
 python setup.py build install
 flake8 *.py
 mypy --strict .
-pytest
+pytest -v
