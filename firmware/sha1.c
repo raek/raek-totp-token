@@ -1,5 +1,8 @@
 #include <string.h>
+
+#ifdef SHA1_DEBUG
 #include <stdio.h>
+#endif
 
 #include "sha1.h"
 
