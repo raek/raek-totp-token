@@ -6,12 +6,11 @@
 #define SHA1_DIGEST_BYTES 20
 #define SHA1_DIGEST_WORDS 5
 #define SHA1_BLOCK_BYTES 64
-#define SHA1_MESSAGE_WORDS 80
+#define SHA1_BLOCK_WORDS 16
 
 typedef struct {
-    uint64_t total_length;
-    uint8_t block[SHA1_BLOCK_BYTES];
-    uint32_t w[SHA1_MESSAGE_WORDS];
+    uint64_t input_length;
+    uint32_t w[SHA1_BLOCK_WORDS];
     size_t pos;
     uint32_t h[SHA1_DIGEST_WORDS];
 } Sha1;
