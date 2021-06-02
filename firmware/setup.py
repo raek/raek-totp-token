@@ -20,6 +20,8 @@ firmware = Extension(
         "inverter_py.c",
         "sha1.c",
         "sha1_py.c",
+        "hmac_sha1.c",
+        "hmac_sha1_py.c",
     ])
 
 setup(

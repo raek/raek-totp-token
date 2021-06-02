@@ -35,3 +35,7 @@ class Sha1:
 
     def digest(self) -> bytes:
         ...
+
+
+def hmac_sha1(key: bytes, message: bytes) -> bytes:
+    ...

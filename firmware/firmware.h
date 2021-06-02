@@ -16,3 +16,5 @@ extern PyType_Spec pin_type_spec;
 extern PyType_Spec inverter_type_spec;
 
 extern PyType_Spec sha1_type_spec;
+
+PyObject *hmac_sha1_py(PyObject *self, PyObject *args);
