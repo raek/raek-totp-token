@@ -22,6 +22,8 @@ firmware = Extension(
         "sha1_py.c",
         "hmac_sha1.c",
         "hmac_sha1_py.c",
+        "hotp.c",
+        "hotp_py.c",
     ])
 
 setup(

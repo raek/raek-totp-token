@@ -39,3 +39,7 @@ class Sha1:
 
 def hmac_sha1(key: bytes, message: bytes) -> bytes:
     ...
+
+
+def hotp(secret: bytes, counter: int) -> str:
+    ...

@@ -8,6 +8,7 @@ static PyMethodDef firmware_methods[] = {
     {"datetime_is_valid", datetime_is_valid_py, METH_VARARGS, NULL},
     {"datetime_to_unix_time", datetime_to_unix_time_py, METH_VARARGS, NULL},
     {"hmac_sha1", hmac_sha1_py, METH_VARARGS, NULL},
+    {"hotp", hotp_py, METH_VARARGS, NULL},
     {NULL, NULL, 0, NULL}
 };
 
