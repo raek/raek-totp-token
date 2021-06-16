@@ -1,0 +1,11 @@
+include_rules
+
+sources = datetime.c inverter.c sha1.c hmac_sha1.c hotp.c
+sources += pin_avr.c demo_avr.c
+
+: foreach $(sources) |> !cc_avr |> build/temp.avr/%B.o {objects}
+
+: {objects} |> !ld_avr |> build/bin.avr/demo.elf
+: build/bin.avr/demo.elf |> !dis_avr |> build/bin.avr/demo.s
+: build/bin.avr/demo.elf |> !hex_avr |> build/bin.avr/demo.hex
+: build/bin.avr/demo.elf |> !size_avr |> build/bin.avr/demo_size.txt

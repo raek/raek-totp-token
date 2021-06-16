@@ -1,7 +1,6 @@
 #pragma once
 
-struct Pin;
-typedef struct Pin Pin;
+#include "pin.h"
 
 typedef struct {
     Pin *in_pin;

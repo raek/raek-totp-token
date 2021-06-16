@@ -3,6 +3,7 @@
 set -u
 set -e
 
+tup
 if [[ ! -d .venv ]]; then
     python3.9 -m venv .venv
 fi
