@@ -10,6 +10,11 @@ firmware = Extension(
         "-Wextra",
         "-Werror",
         "-Wno-unused-parameter",
+        "-Og",
+        "--coverage",
+    ],
+    extra_link_args=[
+        "--coverage",
     ],
     sources=[
         "firmware.c",
