@@ -3,6 +3,7 @@
 /dist
 /.hypothesis
 /.pytest_cache
+/.tup
 /.venv
 __pycache__
 *.egg-info
