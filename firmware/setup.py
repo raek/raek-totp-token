@@ -19,16 +19,16 @@ firmware = Extension(
     sources=[
         "firmware.c",
         "datetime.c",
-        "datetime_py.c",
-        "pin_py.c",
+        "datetime_pywrap.c",
+        "pin_pyimpl.c",
         "inverter.c",
-        "inverter_py.c",
+        "inverter_pywrap.c",
         "sha1.c",
-        "sha1_py.c",
+        "sha1_pywrap.c",
         "hmac_sha1.c",
-        "hmac_sha1_py.c",
+        "hmac_sha1_pywrap.c",
         "hotp.c",
-        "hotp_py.c",
+        "hotp_pywrap.c",
     ])
 
 setup(
