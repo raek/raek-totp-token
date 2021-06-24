@@ -19,7 +19,7 @@ class Inverter:
     in_pin: Pin
     out_pin: Pin
 
-    def __init__(self, input: Pin, output: Pin) -> None:
+    def __init__(self, in_pin: Pin, out_pin: Pin) -> None:
         ...
 
     def run(self) -> None:
