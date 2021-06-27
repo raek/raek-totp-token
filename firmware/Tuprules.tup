@@ -1,5 +1,5 @@
 MCU         = atmega32u4
-CFLAGS      = -std=c99 -g -Werror -Wall -Wextra -pedantic -flto
+CFLAGS      = -std=c99 -g -Werror -Wall -Wextra -Wno-unused-parameter -pedantic -flto
 AVR_CFLAGS  = -mmcu=$(MCU) -Os -DF_CPU=8000000ul
 
 !cc_avr   = |> ^ CC %o^    avr-gcc $(CFLAGS) $(AVR_CFLAGS) -c %f -o %o |>

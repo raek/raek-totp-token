@@ -5,8 +5,6 @@
 
 int main(int argc, char **argv)
 {
-    (void) argc;
-    (void) argv;
     Pin in_pin = PIN_AVR_MAKE(D, 7);
     Pin out_pin = PIN_AVR_MAKE(C, 7);
     Inverter inverter;
