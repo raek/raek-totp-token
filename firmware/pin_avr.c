@@ -3,7 +3,8 @@
 #include "pin.h"
 #include "pin_avr.h"
 
-void pin_set_dir(Pin *pin, bool output)
+__attribute__((always_inline))
+inline void pin_set_dir(Pin *pin, bool output)
 {
     if (output) {
         *pin->ddr_reg |= pin->bit_pattern;
@@ -12,7 +13,8 @@ void pin_set_dir(Pin *pin, bool output)
     }
 }
 
-void pin_write(Pin *pin, bool state)
+__attribute__((always_inline))
+inline void pin_write(Pin *pin, bool state)
 {
     if (state) {
         *pin->port_reg |= pin->bit_pattern;
@@ -21,7 +23,8 @@ void pin_write(Pin *pin, bool state)
     }
 }
 
-bool pin_read(Pin *pin)
+__attribute__((always_inline))
+inline bool pin_read(Pin *pin)
 {
     return (*pin->pin_reg & pin->bit_pattern) != 0;
 }
