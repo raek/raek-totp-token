@@ -2,9 +2,10 @@ MCU         = atmega32u4
 CFLAGS      = -std=c99 -g -Werror -Wall -Wextra -Wno-unused-parameter -pedantic -flto
 AVR_CFLAGS  = -mmcu=$(MCU) -Os -DF_CPU=8000000ul
 
-!cc_avr   = |> ^ CC %o^    avr-gcc $(CFLAGS) $(AVR_CFLAGS) -c %f -o %o |>
-!ld_avr   = |> ^ LD %o^    avr-gcc $(CFLAGS) $(AVR_CFLAGS)    %f -o %o |>
-!ar_avr   = |> ^ AR %o^    avr-gcc-ar crs %o %f                        |>
-!dis_avr  = |> ^ DIS %o^   avr-objdump -d %f > %o                      |>
-!hex_avr  = |> ^ HEX %o^   avr-objcopy -j .text -j .data -O ihex %f %o |>
-!size_avr = |> ^ SIZE %o^  avr-size -C --mcu=$(MCU) %f > %o            |>
+!cc_avr     = |> ^ CC %o^    avr-gcc $(CFLAGS) $(AVR_CFLAGS) -c %f -o %o |>
+!ld_avr     = |> ^ LD %o^    avr-gcc $(CFLAGS) $(AVR_CFLAGS)    %f -o %o |>
+!ar_avr     = |> ^ AR %o^    avr-gcc-ar crs %o %f                        |>
+!dis_avr    = |> ^ DIS %o^   avr-objdump -d %f > %o                      |>
+!hex_avr    = |> ^ HEX %o^   avr-objcopy -j .text -j .data -O ihex %f %o |>
+!size_avr   = |> ^ SIZE %o^  avr-size -C --mcu=$(MCU) %f > %o            |>
+!check_avr  = |> ^ CHECK %o^ ./check_assembly.sh %f > %o                 |>
