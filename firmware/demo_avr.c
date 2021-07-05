@@ -1,16 +1,39 @@
 #include <avr/io.h>
+#include <util/delay.h>
 
-#include "inverter.h"
+#include "as1107.h"
+#include "spi_bitbang.h"
+#include "pin.h"
 #include "pin_avr.h"
 
 int main(int argc, char **argv)
 {
-    Pin in_pin = PIN_AVR_MAKE(D, 7);
-    Pin out_pin = PIN_AVR_MAKE(C, 7);
-    Inverter inverter;
-    inverter_init(&inverter, &in_pin, &out_pin);
+    Pin din = PIN_AVR_MAKE(B, 2);
+    Pin clk = PIN_AVR_MAKE(B, 1);
+    Pin csn = PIN_AVR_MAKE(D, 2);
+    Pin button = PIN_AVR_MAKE(D, 1);
+    Spi spi;
+    spi_bitbang_init(&spi, &din, &clk, &csn);
+    _delay_ms(10);
+    pin_set_dir(&button, PIN_DIR_INPUT);
+    As1107 as1107;
+    as1107_init(&as1107, &spi);
+    as1107_set_test_mode(&as1107, true);
+    _delay_ms(500);
+    as1107_set_test_mode(&as1107, false);
+    _delay_ms(500);
+    uint8_t glyphs[AS1107_GLYPH_COUNT];
+    uint8_t glyph = 0;
     for (;;) {
-        inverter_run(&inverter);
+        glyph <<= 1;
+        if (glyph == 0) {
+            glyph = 1;
+        }
+        for (int i = 0; i < AS1107_GLYPH_COUNT; i++) {
+            glyphs[i] = glyph;
+        }
+        as1107_display_glyphs(&as1107, glyphs);
+        _delay_ms(50);
     }
     return 0;
 }

@@ -1,6 +1,6 @@
 include_rules
 
-sources = datetime.c inverter.c sha1.c hmac_sha1.c hotp.c
+sources = datetime.c sha1.c hmac_sha1.c hotp.c spi_bitbang.c as1107.c
 sources += pin_avr.c demo_avr.c
 
 : foreach $(sources) |> !cc_avr |> build/temp.avr/%B.o {objects}
