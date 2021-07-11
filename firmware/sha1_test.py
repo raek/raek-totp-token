@@ -10,12 +10,39 @@ def test_empty() -> None:
     assert Sha1().digest().hex() == sha1_oracle().digest().hex()
 
 
-def test_short_example() -> None:
-    s = b"abc"
+def test_short() -> None:
+    chunk = b"abc"
     actual = Sha1()
     expected = sha1_oracle()
-    actual.update(s)
-    expected.update(s)
+    actual.update(chunk)
+    expected.update(chunk)
+    assert actual.digest().hex() == expected.digest().hex()
+
+
+def test_padding_up_to_one_fits_in_first_block() -> None:
+    actual = Sha1()
+    expected = sha1_oracle()
+    chunk = b"x" * (expected.block_size - 1)
+    actual.update(chunk)
+    expected.update(chunk)
+    assert actual.digest().hex() == expected.digest().hex()
+
+
+def test_padding_up_to_zeroes_fits_in_first_block() -> None:
+    actual = Sha1()
+    expected = sha1_oracle()
+    chunk = b"x" * (expected.block_size - 2)
+    actual.update(chunk)
+    expected.update(chunk)
+    assert actual.digest().hex() == expected.digest().hex()
+
+
+def test_padding_up_to_length_fits_in_same_block() -> None:
+    actual = Sha1()
+    expected = sha1_oracle()
+    chunk = b"x" * (expected.block_size - 9)
+    actual.update(chunk)
+    expected.update(chunk)
     assert actual.digest().hex() == expected.digest().hex()
 
 
