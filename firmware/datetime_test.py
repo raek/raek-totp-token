@@ -42,6 +42,13 @@ def test_valid_days_in_february() -> None:
     assert datetime_to_unix_time(2100, 2, 28, 0, 0, 0) is not None
 
 
+def test_invalid_year() -> None:
+    assert not datetime_is_valid(1969, 1, 1, 0, 0, 0)
+    assert not datetime_is_valid(2107, 1, 1, 0, 0, 0)
+    assert datetime_to_unix_time(1969, 1, 1, 0, 0, 0) is None
+    assert datetime_to_unix_time(2107, 1, 1, 0, 0, 0) is None
+
+
 def test_invalid_month() -> None:
     assert not datetime_is_valid(2000, 0, 1, 0, 0, 0)
     assert not datetime_is_valid(2000, 13, 1, 0, 0, 0)
