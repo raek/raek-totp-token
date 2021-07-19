@@ -47,16 +47,18 @@ def hotp(secret: bytes, counter: int) -> str:
 
 
 class Pin:
-    __slots__ = ["_cdata", "dir_is_output", "output", "input"]
+    __slots__ = ["_cdata", "name", "dir_is_output", "output", "input"]
 
-    def __init__(self) -> None:
+    def __init__(self, name: str) -> None:
         self._cdata = ffi.new_handle(self)
+        self.name = name
         self.dir_is_output = False
         self.output = False
         self.input = False
 
     def __str__(self) -> str:
         parts = [
+            f"name={self.name!r}",
             f"dir_is_output={self.dir_is_output!r}",
             f"output={self.output!r}",
             f"input={self.input!r}",

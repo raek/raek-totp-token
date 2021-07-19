@@ -5,8 +5,8 @@ from firmware import Pin, Inverter
 
 
 def test_init_and_properties() -> None:
-    in_pin = Pin()
-    out_pin = Pin()
+    in_pin = Pin("in")
+    out_pin = Pin("out")
     inverter = Inverter(in_pin, out_pin)
     assert inverter.in_pin is in_pin
     assert inverter.out_pin is out_pin
@@ -18,10 +18,12 @@ def test_init_wrong_types() -> None:
 
 
 def test_run() -> None:
-    in_pin = Pin()
-    out_pin = Pin()
+    in_pin = Pin("in")
+    out_pin = Pin("out")
     inverter = Inverter(in_pin, out_pin)
+    print(in_pin)
     assert in_pin.dir_is_output is False
+    print(out_pin)
     assert out_pin.dir_is_output is True
 
     in_pin.input = False
@@ -34,8 +36,8 @@ def test_run() -> None:
 
 
 def test_access_attriutes() -> None:
-    in_pin = Pin()
-    out_pin = Pin()
+    in_pin = Pin("in")
+    out_pin = Pin("out")
     inverter = Inverter(in_pin, out_pin)
     assert inverter.in_pin is in_pin
     assert inverter.out_pin is out_pin
