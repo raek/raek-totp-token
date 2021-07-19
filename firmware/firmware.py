@@ -43,7 +43,7 @@ def hotp(secret: bytes, counter: int) -> str:
     scratchpad = ffi.new("Hotp *")
     output = ffi.new("char[]", HOTP_DIGITS)
     lib.hotp(scratchpad, secret, len(secret), counter, output)
-    return b"".join(output).decode("ascii")
+    return cast(bytes, ffi.string(output)).decode("ascii")
 
 
 class Pin:
