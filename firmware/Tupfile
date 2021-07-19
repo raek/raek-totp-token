@@ -1,12 +1,41 @@
-include_rules
+PYTHON      = python
+MCU         = atmega32u4
+CFLAGS      = -std=c99 -g -Werror -Wall -Wextra -Wno-unused-parameter
+AVR_CFLAGS  = -mmcu=$(MCU) -Os -DF_CPU=8000000ul -flto
+HOST_CFLAGS = -fpic `$(PYTHON) get_python_cflags.py`
 
-sources = datetime.c sha1.c hmac_sha1.c hotp.c spi_bitbang.c as1107.c
-sources += pin_avr.c demo_avr.c
+!cc_avr     = |> ^ CC %o^    avr-gcc $(CFLAGS) $(AVR_CFLAGS)                         -c %f -o %o |>
+!ld_avr     = |> ^ LD %o^    avr-gcc $(CFLAGS) $(AVR_CFLAGS) -Wl,--cref -Wl,-Map=%O.map %f -o %o |> | %O.map
+!ar_avr     = |> ^ AR %o^    avr-gcc-ar crs %o %f                        |>
+!dis_avr    = |> ^ DIS %o^   avr-objdump -d %f > %o                      |>
+!hex_avr    = |> ^ HEX %o^   avr-objcopy -j .text -j .data -O ihex %f %o |>
+!size_avr   = |> ^ SIZE %o^  avr-size -C --mcu=$(MCU) %f > %o            |>
+!check_avr  = |> ^ CHECK %o^ ./check_assembly.sh %f > %o                 |>
 
-: foreach $(sources) |> !cc_avr |> build/temp.avr/%B.o {objects}
+!cc_host          = |> ^ CC %o^    gcc $(CFLAGS) $(HOST_CFLAGS)            -c      %f -o %o |>
+!cc_host_coverage = |> ^ CC %o^    gcc $(CFLAGS) $(HOST_CFLAGS) --coverage -c      %f -o %o |> | %O.gcno
+!so_host          = |> ^ SO %o^    gcc $(CFLAGS) $(HOST_CFLAGS) --coverage -shared %f -o %o |>
 
-: {objects} |> !ld_avr |> build/bin.avr/demo.elf
-: build/bin.avr/demo.elf |> !dis_avr   |> build/bin.avr/demo.s
-: build/bin.avr/demo.elf |> !hex_avr   |> build/bin.avr/demo.hex
-: build/bin.avr/demo.elf |> !size_avr  |> build/bin.avr/demo_size.txt
-: build/bin.avr/demo.s   |> !check_avr |> build/bin.avr/demo_check.txt
+!cffi = |> ^ CFFI %o^ $(PYTHON) gen_cffi.py -m %1B -f %1f -i %2f -o %o |>
+!preproc = |> ^ CPP %o^ gcc -D CFFI -nostdinc -I dummy_stdlib -P -E %f -o %o |>
+
+sources = datetime.c sha1.c hmac_sha1.c hotp.c inverter.c
+avr_sources = spi_bitbang.c as1107.c pin_avr.c demo_avr.c
+host_sources = firmware_cffi.c
+
+: firmware_cffi.h |> !preproc |> firmware_cffi.i
+: firmware_cffi.h firmware_cffi.i |> !cffi |> firmware_cffi.c
+
+: foreach $(avr_sources)  |> !cc_avr           |> %B.avr.o  {avr_objects}
+: foreach $(sources)      |> !cc_avr           |> %B.avr.o  {avr_objects}
+: foreach $(host_sources) |> !cc_host          |> %B.host.o {host_objects}
+: foreach $(sources)      |> !cc_host_coverage |> %B.host.o {host_objects}
+
+: {avr_objects} |> !ld_avr |> demo.avr.elf {avr_binaries}
+
+: foreach {avr_binaries}      |> !dis_avr   |> %B.s {avr_disassemblies}
+: foreach {avr_binaries}      |> !hex_avr   |> %B.hex
+: foreach {avr_binaries}      |> !size_avr  |> %B_size.txt
+: foreach {avr_disassemblies} |> !check_avr |> %B_check.txt
+
+: {host_objects} |> !so_host |> firmware_cffi.so
