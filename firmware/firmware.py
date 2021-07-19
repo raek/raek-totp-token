@@ -15,8 +15,6 @@ def datetime_to_unix_time(year: int, month: int, day: int, hour: int, minute: in
 
 
 class Sha1:
-    DIGEST_BYTES = 20  # TODO: extract from header
-
     def __init__(self) -> None:
         self._cdata = ffi.new("Sha1 *")
         lib.sha1_init(self._cdata)
@@ -25,23 +23,21 @@ class Sha1:
         lib.sha1_update(self._cdata, chunk, len(chunk))
 
     def digest(self) -> bytes:
-        digest = ffi.new("uint8_t[]", self.DIGEST_BYTES)
+        digest = ffi.new("uint8_t[]", lib.SHA1_DIGEST_BYTES)
         lib.sha1_digest(self._cdata, digest)
         return bytes(digest)
 
 
 def hmac_sha1(key: bytes, message: bytes) -> bytes:
-    CODE_BYTES = Sha1.DIGEST_BYTES
     scratchpad = ffi.new("HmacSha1 *")
-    code = ffi.new("uint8_t[]", CODE_BYTES)
+    code = ffi.new("uint8_t[]", lib.HMAC_SHA1_CODE_BYTES)
     lib.hmac_sha1(scratchpad, key, len(key), message, len(message), code)
     return bytes(code)
 
 
 def hotp(secret: bytes, counter: int) -> str:
-    HOTP_DIGITS = 6  # TODO: extract from header
     scratchpad = ffi.new("Hotp *")
-    output = ffi.new("char[]", HOTP_DIGITS)
+    output = ffi.new("char[]", lib.HOTP_DIGITS)
     lib.hotp(scratchpad, secret, len(secret), counter, output)
     return cast(bytes, ffi.string(output)).decode("ascii")
 

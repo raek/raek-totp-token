@@ -17,7 +17,7 @@ HOST_CFLAGS = -fpic `$(PYTHON) get_python_cflags.py`
 !so_host          = |> ^ SO %o^    gcc $(CFLAGS) $(HOST_CFLAGS) --coverage -shared %f -o %o |>
 
 !cffi = |> ^ CFFI %o^ $(PYTHON) gen_cffi.py -m %1B -f %1f -i %2f -o %o |>
-!preproc = |> ^ CPP %o^ gcc -D CFFI -nostdinc -I dummy_stdlib -P -E %f -o %o |>
+!preproc = |> ^ CPP %o^ gcc -undef -D CFFI -nostdinc -I dummy_stdlib -P -dN -E %f -o %o |>
 
 sources = datetime.c sha1.c hmac_sha1.c hotp.c inverter.c
 avr_sources = spi_bitbang.c as1107.c pin_avr.c demo_avr.c
