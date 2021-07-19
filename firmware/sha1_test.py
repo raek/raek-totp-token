@@ -47,7 +47,7 @@ def test_padding_up_to_length_fits_in_same_block() -> None:
 
 
 @given(lists(binary()))
-def test_comparing_to_python_version(chunks: list[bytes]) -> None:
+def test_prop_comparing_to_python_version(chunks: list[bytes]) -> None:
     actual = Sha1()
     expected = sha1_oracle()
     for chunk in chunks:

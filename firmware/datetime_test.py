@@ -25,7 +25,7 @@ def test_last_valid() -> None:
 
 
 @given(valid_unix_times)
-def test_any_valid(unix_time: int) -> None:
+def test_prop_any_valid(unix_time: int) -> None:
     dt = datetime.fromtimestamp(unix_time, tz=timezone.utc)
     assert datetime_is_valid(*dt.timetuple()[0:6])
     assert datetime_to_unix_time(*dt.timetuple()[0:6]) == unix_time
@@ -128,7 +128,7 @@ last_year_end = int(datetime(2106, 12, 31, 23, 59, 59, tzinfo=timezone.utc).time
 
 
 @given(integers(min_value=last_year_beginning, max_value=last_year_end))
-def test_last_year(unix_time: int) -> None:
+def test_prop_last_year(unix_time: int) -> None:
     dt = datetime.fromtimestamp(unix_time, tz=timezone.utc)
     valid = datetime_is_valid(*dt.timetuple()[0:6])
     value = datetime_to_unix_time(*dt.timetuple()[0:6])
@@ -143,7 +143,7 @@ def test_last_year(unix_time: int) -> None:
 @given(integers(min_value=1970, max_value=2105),
        integers(min_value=1, max_value=12),
        integers(min_value=28, max_value=31))
-def test_any_end_of_month(year: int, month: int, day: int) -> None:
+def test_prop_any_end_of_month(year: int, month: int, day: int) -> None:
     valid = datetime_is_valid(year, month, day, 0, 0, 0)
     value = datetime_to_unix_time(year, month, day, 0, 0, 0)
     try:

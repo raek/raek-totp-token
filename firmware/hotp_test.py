@@ -35,12 +35,12 @@ def test_example() -> None:
 
 
 @given(secrets, counters)
-def test_any(secret: bytes, counter: int) -> None:
+def test_prop_any(secret: bytes, counter: int) -> None:
     assert hotp(secret, counter) == hotp_oracle(secret, counter)
 
 
 @given(secrets)
-def test_ten_first(secret: bytes) -> None:
+def test_prop_ten_first(secret: bytes) -> None:
     actual = [hotp(secret, counter) for counter in range(10)]
     expected = [hotp_oracle(secret, counter) for counter in range(10)]
     assert actual == expected

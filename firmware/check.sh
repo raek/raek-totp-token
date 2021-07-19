@@ -15,8 +15,10 @@ mypy --strict --allow-untyped-decorators .
 
 rm -rf *.gcda
 rm -rf *.gcov
-pytest -v
+pytest -v -k "not test_prop_"
 rm -rf coverage
 mkdir coverage
 gcovr --print-summary --html-details -o coverage/index.html
 gcov *.gcda
+
+pytest -v -k "test_prop_"

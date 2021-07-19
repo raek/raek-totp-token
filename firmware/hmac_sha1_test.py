@@ -14,7 +14,7 @@ def test_example() -> None:
 
 
 @given(binary(), binary())
-def test_comparing_to_python_version(key: bytes, message: bytes) -> None:
+def test_prop_comparing_to_python_version(key: bytes, message: bytes) -> None:
     actual = hmac_sha1(key, message)
     expected = hmac_oracle(key, message, "sha1")
     assert actual == expected
