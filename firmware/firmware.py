@@ -42,11 +42,56 @@ def hotp(secret: bytes, counter: int) -> str:
     return cast(bytes, ffi.string(output)).decode("ascii")
 
 
-class Pin:
-    __slots__ = ["_cdata", "name", "dir_is_output", "output", "input"]
+class PinCallback:
+    __slots__ = ["_cdata", "name"]
 
     def __init__(self, name: str) -> None:
         self._cdata = ffi.new_handle(self)
+        self.name = name
+
+    def __str__(self) -> str:
+        return f"Pin(name={self.name!r})"
+
+    def set_dir(self, output: bool) -> None:
+        raise NotImplementedError()
+
+    def write(self, state: bool) -> None:
+        raise NotImplementedError()
+
+    def read(self) -> bool:
+        raise NotImplementedError()
+
+    @property
+    def cdata(self) -> ffi.CData:
+        return self._cdata
+
+
+@ffi.def_extern()
+def pin_set_dir(pin_ptr: ffi.CData, output: bool) -> None:
+    void_ptr = ffi.cast("void *", pin_ptr)
+    pin = cast(PinCallback, ffi.from_handle(void_ptr))
+    pin.set_dir(output)
+
+
+@ffi.def_extern()
+def pin_write(pin_ptr: ffi.CData, state: bool) -> None:
+    void_ptr = ffi.cast("void *", pin_ptr)
+    pin = cast(PinCallback, ffi.from_handle(void_ptr))
+    pin.write(state)
+
+
+@ffi.def_extern()
+def pin_read(pin_ptr: ffi.CData) -> bool:
+    void_ptr = ffi.cast("void *", pin_ptr)
+    pin = cast(PinCallback, ffi.from_handle(void_ptr))
+    return pin.read()
+
+
+class Pin(PinCallback):
+    __slots__ = ["dir_is_output", "output", "input"]
+
+    def __init__(self, name: str) -> None:
+        super().__init__(name)
         self.name = name
         self.dir_is_output = False
         self.output = False
@@ -61,30 +106,14 @@ class Pin:
         ]
         return "Pin(" + ", ".join(parts) + ")"
 
-    @property
-    def cdata(self) -> ffi.CData:
-        return self._cdata
+    def set_dir(self, output: bool) -> None:
+        self.dir_is_output = output
 
+    def write(self, state: bool) -> None:
+        self.output = state
 
-@ffi.def_extern()
-def pin_set_dir(pin_ptr: ffi.CData, output: bool) -> None:
-    void_ptr = ffi.cast("void *", pin_ptr)
-    pin = cast(Pin, ffi.from_handle(void_ptr))
-    pin.dir_is_output = output
-
-
-@ffi.def_extern()
-def pin_write(pin_ptr: ffi.CData, state: bool) -> None:
-    void_ptr = ffi.cast("void *", pin_ptr)
-    pin = cast(Pin, ffi.from_handle(void_ptr))
-    pin.output = state
-
-
-@ffi.def_extern()
-def pin_read(pin_ptr: ffi.CData) -> bool:
-    void_ptr = ffi.cast("void *", pin_ptr)
-    pin = cast(Pin, ffi.from_handle(void_ptr))
-    return pin.input
+    def read(self) -> bool:
+        return self.input
 
 
 class Inverter:
