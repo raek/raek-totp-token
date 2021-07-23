@@ -1,4 +1,4 @@
-from typing import Optional, cast
+from typing import Callable, Optional, cast
 
 from firmware_cffi import ffi, lib  # type: ignore
 
@@ -87,15 +87,22 @@ def pin_read(pin_ptr: ffi.CData) -> bool:
     return pin.read()
 
 
-class Pin(PinCallback):
-    __slots__ = ["dir_is_output", "output", "input"]
+_PinCallback = Optional[Callable[[], None]]
 
-    def __init__(self, name: str) -> None:
+
+class Pin(PinCallback):
+    __slots__ = ["dir_is_output", "output", "input", "on_rise", "on_fall"]
+
+    def __init__(self, name: str,
+                 on_rise: _PinCallback = None,
+                 on_fall: _PinCallback = None) -> None:
         super().__init__(name)
         self.name = name
         self.dir_is_output = False
         self.output = False
         self.input = False
+        self.on_rise = on_rise
+        self.on_fall = on_fall
 
     def __str__(self) -> str:
         parts = [
@@ -110,6 +117,10 @@ class Pin(PinCallback):
         self.dir_is_output = output
 
     def write(self, state: bool) -> None:
+        if not self.output and state and self.on_rise:
+            self.on_rise()
+        elif self.output and not state and self.on_fall:
+            self.on_fall()
         self.output = state
 
     def read(self) -> bool:
@@ -137,3 +148,23 @@ class Inverter:
 
     def run(self) -> None:
         lib.inverter_run(self._cdata)
+
+
+class BitbangSpi:
+    __slots__ = ["_cdata", "mosi", "sck", "ss"]
+
+    def __init__(self, mosi: Pin, sck: Pin, ss: Pin) -> None:
+        if not isinstance(mosi, Pin):
+            raise TypeError(mosi)
+        if not isinstance(sck, Pin):
+            raise TypeError(sck)
+        if not isinstance(ss, Pin):
+            raise TypeError(ss)
+        self._cdata = ffi.new("Spi *")
+        self.mosi = mosi
+        self.sck = sck
+        self.ss = ss
+        lib.spi_bitbang_init(self._cdata, mosi._cdata, sck._cdata, ss._cdata)
+
+    def write(self, data: int) -> None:
+        lib.spi_write(self._cdata, data)
