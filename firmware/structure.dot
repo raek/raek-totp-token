@@ -1,0 +1,23 @@
+digraph {
+        graph [rankdir=TB];
+        node [shape=box];
+        edge [arrowhead=vee];
+
+        hotp -> hmac_sha1 -> sha1;
+        datetime;
+
+        pin, spi [shape=ellipse; fillcolor=beige; style=filled];
+        pin_avr [shape=component; fillcolor=coral; style=filled];
+        inverter, spi_bitbang, as1107 [shape=component];
+
+        edge [arrowhead=icurve];
+
+        inverter -> pin;
+        spi_bitbang -> pin;
+        as1107 -> spi;
+
+        edge [dir=back; arrowtail=odot];
+
+        pin -> pin_avr;
+        spi -> spi_bitbang;
+}

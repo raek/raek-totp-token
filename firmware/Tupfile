@@ -18,6 +18,12 @@ HOST_CFLAGS = -fpic `$(PYTHON) get_python_cflags.py`
 
 !preproc = |> ^ CPP %o^ gcc -undef -nostdinc -I dummy_stdlib -P -dN -E %f -o %o |>
 
+!graphviz = |> ^ DOT %o^ dot -Tpng %f > %o |>
+
+
+
+: structure.dot |> !graphviz |> structure.png
+
 
 
 common_sources =  datetime.c sha1.c hmac_sha1.c hotp.c
