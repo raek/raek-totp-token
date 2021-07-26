@@ -6,3 +6,4 @@
 #include "inverter.h"
 #include "spi.h"
 #include "spi_bitbang.h"
+#include "as1107.h"

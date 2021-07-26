@@ -20,8 +20,8 @@ HOST_CFLAGS = -fpic `$(PYTHON) get_python_cflags.py`
 !preproc = |> ^ CPP %o^ gcc -undef -nostdinc -I dummy_stdlib -P -dN -E %f -o %o |>
 
 sources = datetime.c sha1.c hmac_sha1.c hotp.c
-sources += inverter.c spi_bitbang.c
-avr_sources = as1107.c pin_avr.c demo_avr.c
+sources += inverter.c spi_bitbang.c as1107.c
+avr_sources = pin_avr.c demo_avr.c
 host_sources = firmware_cffi.c
 
 : firmware_cffi.h |> !preproc |> firmware_cffi.i
