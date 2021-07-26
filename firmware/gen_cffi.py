@@ -8,13 +8,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-m", "--module-name",  required=True)
 parser.add_argument("-f", "--header-file",  required=True)
 parser.add_argument("-i", "--preproc-file", required=True)
-parser.add_argument("-c", "--callbacks-file", required=True)
+parser.add_argument("-c", "--callbacks-file", required=False)
 parser.add_argument("-o", "--output-file",  required=True)
 args = parser.parse_args()
 
-with open(args.callbacks_file, "rt", encoding="utf-8") as f:
-    callbacks = set(line.strip() for line in f)
-callbacks_regex = "(" + "|".join(re.escape(c) for c in callbacks) + ")"
+if args.callbacks_file:
+    with open(args.callbacks_file, "rt", encoding="utf-8") as f:
+        callbacks = set(line.strip() for line in f)
+    callbacks_regex = "(" + "|".join(re.escape(c) for c in callbacks) + ")"
 
 with open(args.preproc_file, "rt", encoding="utf-8") as f:
     declarations = f.read()
@@ -29,10 +30,11 @@ declarations = re.sub(r"^(#define \w+).*$",
                       declarations,
                       flags=re.MULTILINE)
 # Mark callbacks with special CFFI syntax
-declarations = re.sub(r"^(.*\b" + callbacks_regex + r"\b.*)$",
-                      lambda m: 'extern "Python+C" ' + m.group(1),
-                      declarations,
-                      flags=re.MULTILINE)
+if args.callbacks_file:
+    declarations = re.sub(r"^(.*\b" + callbacks_regex + r"\b.*)$",
+                          lambda m: 'extern "Python+C" ' + m.group(1),
+                          declarations,
+                          flags=re.MULTILINE)
 
 builder = FFI()
 builder.cdef(declarations)

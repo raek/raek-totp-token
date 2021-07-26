@@ -16,21 +16,18 @@ HOST_CFLAGS = -fpic `$(PYTHON) get_python_cflags.py`
 !cc_host_coverage = |> ^ CC %o^    gcc $(CFLAGS) $(HOST_CFLAGS) --coverage -c      %f -o %o |> | %O.gcno
 !so_host          = |> ^ SO %o^    gcc $(CFLAGS) $(HOST_CFLAGS) --coverage -shared %f -o %o |>
 
-!cffi = |> ^ CFFI %o^ $(PYTHON) gen_cffi.py -m %1B -f %1f -i %2f -c %3f -o %o |>
 !preproc = |> ^ CPP %o^ gcc -undef -nostdinc -I dummy_stdlib -P -dN -E %f -o %o |>
 
-sources = datetime.c sha1.c hmac_sha1.c hotp.c
-sources += inverter.c spi_bitbang.c as1107.c
+
+
+common_sources =  datetime.c sha1.c hmac_sha1.c hotp.c
+common_sources += inverter.c spi_bitbang.c as1107.c
+
+
+
 avr_sources = pin_avr.c demo_avr.c
-host_sources = firmware_cffi.c
 
-: firmware_cffi.h |> !preproc |> firmware_cffi.i
-: firmware_cffi.h firmware_cffi.i callbacks.txt|> !cffi |> firmware_cffi.c
-
-: foreach $(avr_sources)  |> !cc_avr           |> %B.avr.o  {avr_objects}
-: foreach $(sources)      |> !cc_avr           |> %B.avr.o  {avr_objects}
-: foreach $(host_sources) |> !cc_host          |> %B.host.o {host_objects}
-: foreach $(sources)      |> !cc_host_coverage |> %B.host.o {host_objects}
+: foreach $(common_sources) $(avr_sources) |> !cc_avr |> %B.avr.o  {avr_objects}
 
 : {avr_objects} |> !ld_avr |> demo.avr.elf {avr_binaries}
 
@@ -39,4 +36,21 @@ host_sources = firmware_cffi.c
 : foreach {avr_binaries}      |> !size_avr  |> %B_size.txt
 : foreach {avr_disassemblies} |> !check_avr |> %B_check.txt
 
-: {host_objects} |> !so_host |> firmware_cffi.so
+
+
+cffi_sources = pure_cffi.c inverter_cffi.c spi_bitbang_cffi.c
+cffi_headers = pure_cffi.h inverter.h spi_bitbang.h
+
+: foreach $(cffi_headers) |> !preproc |> %B.i
+
+: pure_cffi.h pure_cffi.i |> ^ CFFI %o^ $(PYTHON) gen_cffi.py -m pure_cffi -f %1f -i %2f -o %o |> pure_cffi.c
+: inverter.h inverter.i callbacks.txt |> ^ CFFI %o^ $(PYTHON) gen_cffi.py -m inverter_cffi -f %1f -i %2f -c %3f -o %o |> inverter_cffi.c
+: spi_bitbang.h spi_bitbang.i callbacks.txt |> ^ CFFI %o^ $(PYTHON) gen_cffi.py -m spi_bitbang_cffi -f %1f -i %2f -c %3f -o %o |> spi_bitbang_cffi.c
+
+: foreach $(common_sources) |> !cc_host_coverage |> %B.host.o
+: foreach $(cffi_sources)   |> !cc_host          |> %B.host.o
+
+: pure_cffi.host.o datetime.host.o sha1.host.o hmac_sha1.host.o hotp.host.o |> !so_host |> pure_cffi.so
+
+: inverter_cffi.host.o    inverter.host.o    |> !so_host |> inverter_cffi.so
+: spi_bitbang_cffi.host.o spi_bitbang.host.o |> !so_host |> spi_bitbang_cffi.so

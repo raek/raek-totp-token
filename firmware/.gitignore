@@ -3,9 +3,9 @@
 /.pytest_cache
 /.tup
 /.venv
-/firmware_cffi.c
 __pycache__
 *.egg-info
+*_cffi.c
 *.i
 *.o
 *.so
