@@ -2,10 +2,10 @@
 
 #include "pin.h"
 
-typedef struct {
-    Pin *in_pin;
-    Pin *out_pin;
-} Inverter;
+struct inverter {
+    struct pin *in_pin;
+    struct pin *out_pin;
+};
 
-void inverter_init(Inverter *inverter, Pin *in_pin, Pin *out_pin);
-void inverter_run(Inverter *inverter);
+void inverter_init(struct inverter *inverter, struct pin *in_pin, struct pin *out_pin);
+void inverter_run(struct inverter *inverter);

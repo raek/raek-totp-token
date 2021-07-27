@@ -5,9 +5,8 @@
 #define PIN_DIR_INPUT false
 #define PIN_DIR_OUTPUT true
 
-struct Pin;
-typedef struct Pin Pin;
+struct pin;
 
-void pin_set_dir(Pin *pin, bool output);
-void pin_write(Pin *pin, bool state);
-bool pin_read(Pin *pin);
+void pin_set_dir(struct pin *pin, bool output);
+void pin_write(struct pin *pin, bool state);
+bool pin_read(struct pin *pin);

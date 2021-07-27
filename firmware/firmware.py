@@ -14,7 +14,7 @@ datetime_is_valid = pure_cffi.lib.datetime_is_valid
 
 
 def datetime_to_unix_time(year: int, month: int, day: int, hour: int, minute: int, second: int) -> Optional[int]:
-    result = pure_cffi.ffi.new("UnixTime *", 0)
+    result = pure_cffi.ffi.new("unix_time *", 0)
     if pure_cffi.lib.datetime_to_unix_time(result, year, month, day, hour, minute, second):
         return cast(int, result[0])
     else:
@@ -23,7 +23,7 @@ def datetime_to_unix_time(year: int, month: int, day: int, hour: int, minute: in
 
 class Sha1:
     def __init__(self) -> None:
-        self._cdata = pure_cffi.ffi.new("Sha1 *")
+        self._cdata = pure_cffi.ffi.new("struct sha1 *")
         pure_cffi.lib.sha1_init(self._cdata)
 
     def update(self, chunk: bytes) -> None:
@@ -36,14 +36,14 @@ class Sha1:
 
 
 def hmac_sha1(key: bytes, message: bytes) -> bytes:
-    scratchpad = pure_cffi.ffi.new("HmacSha1 *")
+    scratchpad = pure_cffi.ffi.new("struct hmac_sha1 *")
     code = pure_cffi.ffi.new("uint8_t[]", pure_cffi.lib.HMAC_SHA1_CODE_BYTES)
     pure_cffi.lib.hmac_sha1(scratchpad, key, len(key), message, len(message), code)
     return bytes(code)
 
 
 def hotp(secret: bytes, counter: int) -> str:
-    scratchpad = pure_cffi.ffi.new("Hotp *")
+    scratchpad = pure_cffi.ffi.new("struct hotp *")
     output = pure_cffi.ffi.new("char[]", pure_cffi.lib.HOTP_DIGITS)
     pure_cffi.lib.hotp(scratchpad, secret, len(secret), counter, output)
     return cast(bytes, pure_cffi.ffi.string(output)).decode("ascii")
@@ -143,7 +143,7 @@ class Inverter:
             raise TypeError(in_pin)
         if not isinstance(out_pin, Pin):
             raise TypeError(out_pin)
-        self._cdata = inverter_cffi.ffi.new("Inverter *")
+        self._cdata = inverter_cffi.ffi.new("struct inverter *")
         self._in_pin = in_pin
         self._out_pin = out_pin
         inverter_cffi.lib.inverter_init(self._cdata, self._in_pin.cdata, self._out_pin.cdata)
@@ -170,7 +170,7 @@ class BitbangSpi:
             raise TypeError(sck)
         if not isinstance(ss, Pin):
             raise TypeError(ss)
-        self._cdata = spi_bitbang_cffi.ffi.new("Spi *")
+        self._cdata = spi_bitbang_cffi.ffi.new("struct spi *")
         self.mosi = mosi
         self.sck = sck
         self.ss = ss

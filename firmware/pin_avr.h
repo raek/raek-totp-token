@@ -2,8 +2,6 @@
 
 #include <stdint.h>
 
-#include "pin.h"
-
 #define PIN_AVR_MAKE(letter, bit)                 \
     {                                             \
         .pin_reg     = &PIN ## letter,            \
@@ -12,7 +10,7 @@
         .bit_pattern = 1<<(bit),                  \
     }
 
-struct Pin {
+struct pin {
     volatile uint8_t *pin_reg;
     volatile uint8_t *port_reg;
     volatile uint8_t *ddr_reg;

@@ -1,4 +1,5 @@
 #include "as1107.h"
+#include "spi.h"
 
 #define REG_NO_OP          0x00
 #define REG_DIGIT_0        0x01
@@ -21,13 +22,13 @@
 #define FEAT_SYNC           (1<<6)
 #define FEAT_BLINK_START    (1<<7)
 
-static void set_reg(As1107 *as1107, uint8_t reg, uint8_t value)
+static void set_reg(struct as1107 *as1107, uint8_t reg, uint8_t value)
 {
     uint16_t data = (((uint16_t) reg) << 8) | ((uint16_t) value);
     spi_write(as1107->spi, data);
 }
 
-void as1107_init(As1107 *as1107, Spi *spi)
+void as1107_init(struct as1107 *as1107, struct spi *spi)
 {
     as1107->spi = spi;
     set_reg(as1107, REG_SHUTDOWN, 0);
@@ -42,23 +43,23 @@ void as1107_init(As1107 *as1107, Spi *spi)
     set_reg(as1107, REG_SHUTDOWN, SHUTDOWN_KEEP_FEATURE | SHUTDOWN_NORMAL);
 }
 
-void as1107_set_test_mode(As1107 *as1107, bool test_mode_on)
+void as1107_set_test_mode(struct as1107 *as1107, bool test_mode_on)
 {
     set_reg(as1107, REG_DISPLAY_TEST, test_mode_on ? 0x01 : 0x00);
 }
 
-void as1107_set_intensity(As1107 *as1107, uint8_t intensity)
+void as1107_set_intensity(struct as1107 *as1107, uint8_t intensity)
 {
     set_reg(as1107, REG_INTENSITY, intensity);
 }
 
-void as1107_display_glyphs(As1107 *as1107, const uint8_t *glyphs)
+void as1107_display_glyphs(struct as1107 *as1107, const uint8_t *glyphs)
 {
     for (int i = 0; i < AS1107_GLYPH_COUNT; i++) {
         set_reg(as1107, (uint8_t) (REG_DIGIT_0 + i), glyphs[i]);
     }
 }
 
-void as1107_clear(As1107 *as1107)
+void as1107_clear(struct as1107 *as1107)
 {
 }

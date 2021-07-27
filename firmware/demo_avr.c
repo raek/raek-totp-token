@@ -8,15 +8,15 @@
 
 int main(int argc, char **argv)
 {
-    Pin din = PIN_AVR_MAKE(B, 2);
-    Pin clk = PIN_AVR_MAKE(B, 1);
-    Pin csn = PIN_AVR_MAKE(D, 2);
-    Pin button = PIN_AVR_MAKE(D, 1);
-    Spi spi;
+    struct pin din = PIN_AVR_MAKE(B, 2);
+    struct pin clk = PIN_AVR_MAKE(B, 1);
+    struct pin csn = PIN_AVR_MAKE(D, 2);
+    struct pin button = PIN_AVR_MAKE(D, 1);
+    struct spi spi;
     spi_bitbang_init(&spi, &din, &clk, &csn);
     _delay_ms(10);
     pin_set_dir(&button, PIN_DIR_INPUT);
-    As1107 as1107;
+    struct as1107 as1107;
     as1107_init(&as1107, &spi);
     as1107_set_test_mode(&as1107, true);
     _delay_ms(500);

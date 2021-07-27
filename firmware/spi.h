@@ -10,7 +10,6 @@
 
 #include <stdint.h>
 
-struct Spi;
-typedef struct Spi Spi;
+struct spi;
 
-void spi_write(Spi *spi, uint16_t data);
+void spi_write(struct spi *spi, uint16_t data);

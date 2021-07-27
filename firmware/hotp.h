@@ -8,10 +8,10 @@
 #define HOTP_COUNTER_BYTES 8
 #define HOTP_DIGITS 6
 
-typedef struct {
+struct hotp {
     uint8_t counter_bytes[HOTP_COUNTER_BYTES];
-    HmacSha1 hmac_sha1_scratchpad;
+    struct hmac_sha1 hmac_sha1_scratchpad;
     uint8_t hmac_sha1_code[HMAC_SHA1_CODE_BYTES];
-} Hotp;
+};
 
-void hotp(Hotp *scratchpad, uint8_t *secret, size_t secret_length, uint64_t counter, char *digits_output);
+void hotp(struct hotp *scratchpad, uint8_t *secret, size_t secret_length, uint64_t counter, char *digits_output);

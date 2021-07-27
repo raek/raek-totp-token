@@ -1,12 +1,12 @@
 #pragma once
 
-#include "pin.h"
 #include "spi.h"
+#include "pin.h"
 
-struct Spi {
-    Pin *mosi;
-    Pin *sck;
-    Pin *ss;
+struct spi {
+    struct pin *mosi;
+    struct pin *sck;
+    struct pin *ss;
 };
 
-void spi_bitbang_init(Spi *spi, Pin *mosi, Pin *sck, Pin *ss);
+void spi_bitbang_init(struct spi *spi, struct pin *mosi, struct pin *sck, struct pin *ss);

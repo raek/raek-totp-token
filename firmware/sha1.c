@@ -8,16 +8,16 @@
 
 #define MIN(a, b) (((a) <= (b)) ? (a) : (b))
 
-static void pad_block(Sha1 *sha1);
-static void process_block(Sha1 *sha1);
+static void pad_block(struct sha1 *sha1);
+static void process_block(struct sha1 *sha1);
 static inline uint32_t rotl(uint32_t x, int n);
 static inline uint32_t f_ch(uint32_t x, uint32_t y, uint32_t z);
 static inline uint32_t f_parity(uint32_t x, uint32_t y, uint32_t z);
 static inline uint32_t f_maj(uint32_t x, uint32_t y, uint32_t z);
-static void put_byte_into_u32be(Sha1 *sha1, uint8_t value);
+static void put_byte_into_u32be(struct sha1 *sha1, uint8_t value);
 static uint8_t *write_u32be(uint8_t *p, uint32_t value);
 
-void sha1_init(Sha1 *sha1)
+void sha1_init(struct sha1 *sha1)
 {
 #ifdef SHA1_DEBUG
     printf("init()\n");
@@ -32,7 +32,7 @@ void sha1_init(Sha1 *sha1)
     sha1->h[4] = 0xc3d2e1f0;
 }
 
-void sha1_update(Sha1 *sha1, const uint8_t *data, size_t length)
+void sha1_update(struct sha1 *sha1, const uint8_t *data, size_t length)
 {
 #ifdef SHA1_DEBUG
     printf("update(..., %d)\n", (int) length);
@@ -54,7 +54,7 @@ void sha1_update(Sha1 *sha1, const uint8_t *data, size_t length)
     }
 }
 
-void sha1_digest(Sha1 *sha1, uint8_t *digest)
+void sha1_digest(struct sha1 *sha1, uint8_t *digest)
 {
 #ifdef SHA1_DEBUG
     printf("digest()\n");
@@ -66,7 +66,7 @@ void sha1_digest(Sha1 *sha1, uint8_t *digest)
     }
 }
 
-static void pad_block(Sha1 *sha1)
+static void pad_block(struct sha1 *sha1)
 {
 #ifdef SHA1_DEBUG
     printf("process_block()\n");
@@ -87,7 +87,7 @@ static void pad_block(Sha1 *sha1)
     process_block(sha1);
 }
 
-static void process_block(Sha1 *sha1)
+static void process_block(struct sha1 *sha1)
 {
 
 #ifdef SHA1_DEBUG
@@ -171,7 +171,7 @@ static inline uint32_t f_maj(uint32_t x, uint32_t y, uint32_t z)
     return (x & y) ^ (x & z) ^ (y & z);
 }
 
-static void put_byte_into_u32be(Sha1 *sha1, uint8_t value)
+static void put_byte_into_u32be(struct sha1 *sha1, uint8_t value)
 {
     uint32_t *word = &sha1->w[sha1->pos / 4];
     size_t shift = (3 - (sha1->pos % 4)) * 8;

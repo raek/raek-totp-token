@@ -1,7 +1,8 @@
 #include "spi.h"
 #include "spi_bitbang.h"
+#include "pin.h"
 
-void spi_bitbang_init(Spi *spi, Pin *mosi, Pin *sck, Pin *ss)
+void spi_bitbang_init(struct spi *spi, struct pin *mosi, struct pin *sck, struct pin *ss)
 {
     spi->mosi = mosi;
     spi->sck = sck;
@@ -14,7 +15,7 @@ void spi_bitbang_init(Spi *spi, Pin *mosi, Pin *sck, Pin *ss)
     pin_set_dir(ss, PIN_DIR_OUTPUT);
 }
 
-void spi_write(Spi *spi, uint16_t data)
+void spi_write(struct spi *spi, uint16_t data)
 {
     uint16_t x = data;
     pin_write(spi->ss, false);

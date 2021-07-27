@@ -7,7 +7,7 @@
 
 static inline void xor_bytes(uint8_t *data, size_t data_length, uint8_t xor_value);
 
-void hmac_sha1(HmacSha1 *scratchpad, const uint8_t *key, size_t key_length, const uint8_t *message, size_t message_length, uint8_t *code_output)
+void hmac_sha1(struct hmac_sha1 *scratchpad, const uint8_t *key, size_t key_length, const uint8_t *message, size_t message_length, uint8_t *code_output)
 {
     memset(scratchpad->key_block, 0, SHA1_BLOCK_BYTES);
     if (key_length <= SHA1_BLOCK_BYTES) {
