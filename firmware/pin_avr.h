@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <avr/io.h>
 
 #define PIN_AVR_MAKE(letter, bit)                 \
     {                                             \

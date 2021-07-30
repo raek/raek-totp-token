@@ -1,4 +1,4 @@
-from typing import Callable, Optional, cast
+from typing import Callable, NamedTuple, Optional, cast
 
 import cffi  # type: ignore
 
@@ -47,6 +47,16 @@ def hotp(secret: bytes, counter: int) -> str:
     output = pure_cffi.ffi.new("char[]", pure_cffi.lib.HOTP_DIGITS)
     pure_cffi.lib.hotp(scratchpad, secret, len(secret), counter, output)
     return cast(bytes, pure_cffi.ffi.string(output)).decode("ascii")
+
+
+Sig = int
+
+
+class Actor(NamedTuple):
+    cdata: cffi.FFI.CData
+
+    def post(self, sig: Sig) -> None:
+        self.cdata.dispatcher(self.cdata, sig)
 
 
 class PinCallback:
@@ -137,16 +147,67 @@ class Pin(PinCallback):
         return self.input
 
 
+class PinintOwner(NamedTuple):
+    recipient: Actor
+    rising_sig: Sig
+    falling_sig: Sig
+
+
+class Pinint:
+    __slots__ = ["_cdata", "_owner", "name"]
+
+    def __init__(self, name: str) -> None:
+        self._cdata = ffi.new_handle(self)
+        self._owner: Optional[PinintOwner] = None
+        self.name = name
+
+    def __str__(self) -> str:
+        return f"Pinint(name={self.name!r})"
+
+    def acquire(self, recipient: Actor, rising_sig: Sig, falling_sig: Sig) -> None:
+        self._owner = PinintOwner(recipient, rising_sig, falling_sig)
+
+    def trigger_rise(self) -> None:
+        if self._owner:
+            self._owner.recipient.post(self._owner.rising_sig)
+
+    def trigger_fall(self) -> None:
+        if self._owner:
+            self._owner.recipient.post(self._owner.falling_sig)
+
+    @property
+    def cdata(self) -> cffi.FFI.CData:
+        return self._cdata
+
+
+@inverter_cffi.ffi.def_extern()
+def pinint_acquire(pinint_ptr: cffi.FFI.CData,
+                   recipient_cdata: cffi.FFI.CData,
+                   rising_sig: Sig,
+                   falling_sig: Sig) -> None:
+    pinint_void_ptr = ffi.cast("void *", pinint_ptr)
+    pinint = cast(Pinint, ffi.from_handle(pinint_void_ptr))
+    recipient = Actor(recipient_cdata)
+    pinint.acquire(recipient, rising_sig, falling_sig)
+
+
 class Inverter:
-    def __init__(self, in_pin: Pin, out_pin: Pin) -> None:
+    def __init__(self, in_pinint: Pinint, in_pin: Pin, out_pin: Pin) -> None:
+        if not isinstance(in_pinint, Pinint):
+            raise TypeError(in_pinint)
         if not isinstance(in_pin, Pin):
             raise TypeError(in_pin)
         if not isinstance(out_pin, Pin):
             raise TypeError(out_pin)
         self._cdata = inverter_cffi.ffi.new("struct inverter *")
+        self._in_pinint = in_pinint
         self._in_pin = in_pin
         self._out_pin = out_pin
-        inverter_cffi.lib.inverter_init(self._cdata, self._in_pin.cdata, self._out_pin.cdata)
+        inverter_cffi.lib.inverter_init(self._cdata, self._in_pinint.cdata, self._in_pin.cdata, self._out_pin.cdata)
+
+    @property
+    def in_pinint(self) -> Pinint:
+        return self._in_pinint
 
     @property
     def in_pin(self) -> Pin:

@@ -31,11 +31,14 @@ common_sources += inverter.c spi_bitbang.c as1107.c
 
 
 
-avr_sources = pin_avr.c demo_avr.c
+avr_sources = actor_avr.c pin_avr.c pinint_avr.c
+avr_main_sources = demo_as1107.c demo_inverter.c
 
-: foreach $(common_sources) $(avr_sources) |> !cc_avr |> %B.avr.o  {avr_objects}
+: foreach $(common_sources) $(avr_sources) |> !cc_avr |> %B.avr.o {avr_objects}
+: foreach $(avr_main_sources) |> !cc_avr |> %B.avr.o
 
-: {avr_objects} |> !ld_avr |> demo.avr.elf {avr_binaries}
+: demo_as1107.avr.o      {avr_objects} |> !ld_avr |> demo_as1107.avr.elf {avr_binaries}
+: demo_inverter.avr.o {avr_objects} |> !ld_avr |> demo_inverter.avr.elf {avr_binaries}
 
 : foreach {avr_binaries}      |> !dis_avr   |> %B.s {avr_disassemblies}
 : foreach {avr_binaries}      |> !hex_avr   |> %B.hex
@@ -44,7 +47,7 @@ avr_sources = pin_avr.c demo_avr.c
 
 
 
-cffi_sources = pure_cffi.c inverter_cffi.c spi_bitbang_cffi.c
+host_sources = actor_host.c pure_cffi.c inverter_cffi.c spi_bitbang_cffi.c
 cffi_headers = pure_cffi.h inverter.h spi_bitbang.h
 
 : foreach $(cffi_headers) |> !preproc |> %B.i
@@ -54,9 +57,8 @@ cffi_headers = pure_cffi.h inverter.h spi_bitbang.h
 : spi_bitbang.h spi_bitbang.i callbacks.txt |> ^ CFFI %o^ $(PYTHON) gen_cffi.py -m spi_bitbang_cffi -f %1f -i %2f -c %3f -o %o |> spi_bitbang_cffi.c
 
 : foreach $(common_sources) |> !cc_host_coverage |> %B.host.o
-: foreach $(cffi_sources)   |> !cc_host          |> %B.host.o
+: foreach $(host_sources)   |> !cc_host          |> %B.host.o
 
 : pure_cffi.host.o datetime.host.o sha1.host.o hmac_sha1.host.o hotp.host.o |> !so_host |> pure_cffi.so
-
-: inverter_cffi.host.o    inverter.host.o    |> !so_host |> inverter_cffi.so
+: inverter_cffi.host.o inverter.host.o actor_host.host.o |> !so_host |> inverter_cffi.so
 : spi_bitbang_cffi.host.o spi_bitbang.host.o |> !so_host |> spi_bitbang_cffi.so
