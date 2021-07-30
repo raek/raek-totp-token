@@ -1,17 +1,15 @@
 #!/usr/bin/env bash
 
 # Usage:
-#     ./flash <app name> [avrdude args...]
+#     ./flash <filename.hex> [avrdude args...]
 #
 # Custom programmer device:
-#     DEVICE=/dev/ttyXXX ./flash <app name> [avrdude args...]
+#     DEVICE=/dev/ttyXXX ./flash <filename.hex> [avrdude args...]
 
 set -e
 set -u
 
-tup
-
-filename=build/bin.avr/"$1".hex
+filename="$1"
 if [[ ! -f $filename ]]; then
   echo "File does not exist: $filename"
   exit 1
