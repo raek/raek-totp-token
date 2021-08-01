@@ -217,9 +217,6 @@ class Blinky:
     def out_pin(self) -> Pin:
         return self._out_pin
 
-    def run(self) -> None:
-        blinky_cffi.lib.blinky_run(self._cdata)
-
 
 class BitbangSpi:
     __slots__ = ["_cdata", "mosi", "sck", "ss"]
