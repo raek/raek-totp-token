@@ -3,7 +3,7 @@ from typing import Callable, NamedTuple, Optional, cast
 import cffi  # type: ignore
 
 import pure_cffi  # type: ignore
-import inverter_cffi  # type: ignore
+import blinky_cffi  # type: ignore
 import spi_bitbang_cffi  # type: ignore
 
 
@@ -83,7 +83,7 @@ class PinCallback:
         return self._cdata
 
 
-@inverter_cffi.ffi.def_extern()
+@blinky_cffi.ffi.def_extern()
 @spi_bitbang_cffi.ffi.def_extern()
 def pin_set_dir(pin_ptr: cffi.FFI.CData, output: bool) -> None:
     void_ptr = ffi.cast("void *", pin_ptr)
@@ -91,7 +91,7 @@ def pin_set_dir(pin_ptr: cffi.FFI.CData, output: bool) -> None:
     pin.set_dir(output)
 
 
-@inverter_cffi.ffi.def_extern()
+@blinky_cffi.ffi.def_extern()
 @spi_bitbang_cffi.ffi.def_extern()
 def pin_write(pin_ptr: cffi.FFI.CData, state: bool) -> None:
     void_ptr = ffi.cast("void *", pin_ptr)
@@ -99,7 +99,7 @@ def pin_write(pin_ptr: cffi.FFI.CData, state: bool) -> None:
     pin.write(state)
 
 
-@inverter_cffi.ffi.def_extern()
+@blinky_cffi.ffi.def_extern()
 @spi_bitbang_cffi.ffi.def_extern()
 def pin_read(pin_ptr: cffi.FFI.CData) -> bool:
     void_ptr = ffi.cast("void *", pin_ptr)
@@ -180,7 +180,7 @@ class Pinint:
         return self._cdata
 
 
-@inverter_cffi.ffi.def_extern()
+@blinky_cffi.ffi.def_extern()
 def pinint_acquire(pinint_ptr: cffi.FFI.CData,
                    recipient_cdata: cffi.FFI.CData,
                    rising_sig: Sig,
@@ -191,7 +191,7 @@ def pinint_acquire(pinint_ptr: cffi.FFI.CData,
     pinint.acquire(recipient, rising_sig, falling_sig)
 
 
-class Inverter:
+class Blinky:
     def __init__(self, in_pinint: Pinint, in_pin: Pin, out_pin: Pin) -> None:
         if not isinstance(in_pinint, Pinint):
             raise TypeError(in_pinint)
@@ -199,11 +199,11 @@ class Inverter:
             raise TypeError(in_pin)
         if not isinstance(out_pin, Pin):
             raise TypeError(out_pin)
-        self._cdata = inverter_cffi.ffi.new("struct inverter *")
+        self._cdata = blinky_cffi.ffi.new("struct blinky *")
         self._in_pinint = in_pinint
         self._in_pin = in_pin
         self._out_pin = out_pin
-        inverter_cffi.lib.inverter_init(self._cdata, self._in_pinint.cdata, self._in_pin.cdata, self._out_pin.cdata)
+        blinky_cffi.lib.blinky_init(self._cdata, self._in_pinint.cdata, self._in_pin.cdata, self._out_pin.cdata)
 
     @property
     def in_pinint(self) -> Pinint:
@@ -218,7 +218,7 @@ class Inverter:
         return self._out_pin
 
     def run(self) -> None:
-        inverter_cffi.lib.inverter_run(self._cdata)
+        blinky_cffi.lib.blinky_run(self._cdata)
 
 
 class BitbangSpi:
