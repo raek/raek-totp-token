@@ -65,7 +65,6 @@ static inline void post(struct actor *recipient, actor_sig sig)
 
 void actor_system_loop(void)
 {
-    sei();
     for (;;) {
         cli();
         struct msg *msg = pop_msg(&incoming_msgs);
@@ -75,13 +74,12 @@ void actor_system_loop(void)
             sei();
             sleep_cpu();
             continue;
-        } else {
-            sei();
         }
-        msg->recipient->dispatcher(msg->recipient, msg->sig);
-        cli();
+        struct actor *recipient = msg->recipient;
+        actor_sig sig = msg->sig;
         push_msg(&free_msgs, msg);
         sei();
+        recipient->dispatcher(recipient, sig);
     }
 }
 
