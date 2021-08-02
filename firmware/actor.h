@@ -2,7 +2,7 @@
 
 #include <stddef.h>
 
-#define ACTOR_INVALID_SIG -1
+#define ACTOR_NO_SIG -1
 
 struct actor;
 

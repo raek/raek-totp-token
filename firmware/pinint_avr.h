@@ -17,8 +17,8 @@ enum pinint_avr_id {
     {                                                    \
         .id = PININT_AVR_ ## pinint_id,                  \
         .recipient = NULL,                               \
-        .rising_sig = ACTOR_INVALID_SIG,                 \
-        .falling_sig = ACTOR_INVALID_SIG,                \
+        .rising_sig = ACTOR_NO_SIG,                      \
+        .falling_sig = ACTOR_NO_SIG,                     \
     }
 
 struct pinint {
