@@ -1,5 +1,6 @@
 import argparse
 import re
+import sys
 
 from cffi import FFI  # type: ignore
 
@@ -35,8 +36,20 @@ if args.callbacks_file:
                           lambda m: 'extern "Python+C" ' + m.group(1),
                           declarations,
                           flags=re.MULTILINE)
+# Remove empty lines
+declarations = re.sub(r"^\s*$\n",
+                      "",
+                      declarations,
+                      flags=re.MULTILINE)
 
-builder = FFI()
-builder.cdef(declarations)
-builder.set_source(args.module_name, f'#include "{args.header_file}"')
-builder.emit_c_code(args.output_file)
+try:
+    builder = FFI()
+    builder.cdef(declarations)
+    builder.set_source(args.module_name, f'#include "{args.header_file}"')
+    builder.emit_c_code(args.output_file)
+
+except Exception as e:
+    for lineno, line in enumerate(declarations.split("\n"), start=1):
+        print(f"{lineno:3d}: {line}")
+    print(e)
+    sys.exit(1)
