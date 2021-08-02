@@ -5,12 +5,12 @@ from firmware import Pin, Pinint, Blinky
 
 
 def test_init_and_properties() -> None:
-    in_pinint = Pinint("in")
-    in_pin = Pin("in")
-    out_pin = Pin("out")
-    blinky = Blinky(in_pinint, in_pin, out_pin)
-    assert blinky.in_pin is in_pin
-    assert blinky.out_pin is out_pin
+    button_pinint = Pinint("button")
+    button_pin = Pin("button")
+    led_pin = Pin("led")
+    blinky = Blinky(button_pinint, button_pin, led_pin)
+    assert blinky.button_pin is button_pin
+    assert blinky.led_pin is led_pin
 
 
 def test_init_wrong_types() -> None:
@@ -19,28 +19,28 @@ def test_init_wrong_types() -> None:
 
 
 def test_run() -> None:
-    in_pinint = Pinint("in")
-    in_pin = Pin("in")
-    in_pin.input = False
-    out_pin = Pin("out")
-    blinky = Blinky(in_pinint, in_pin, out_pin)
-    assert in_pin.dir_is_output is False
-    assert out_pin.dir_is_output is True
-    assert out_pin.output is True
+    button_pinint = Pinint("button")
+    button_pin = Pin("button")
+    button_pin.input = False
+    led_pin = Pin("led")
+    blinky = Blinky(button_pinint, button_pin, led_pin)
+    assert button_pin.dir_is_output is False
+    assert led_pin.dir_is_output is True
+    assert led_pin.output is True
 
-    in_pinint.trigger_rise()
-    assert out_pin.output is False
-    in_pinint.trigger_fall()
-    assert out_pin.output is True
+    button_pinint.trigger_rise()
+    assert led_pin.output is False
+    button_pinint.trigger_fall()
+    assert led_pin.output is True
 
     del blinky
 
 
 def test_access_attriutes() -> None:
-    in_pinint = Pinint("in")
-    in_pin = Pin("in")
-    out_pin = Pin("out")
-    blinky = Blinky(in_pinint, in_pin, out_pin)
-    assert blinky.in_pinint is in_pinint
-    assert blinky.in_pin is in_pin
-    assert blinky.out_pin is out_pin
+    button_pinint = Pinint("button")
+    button_pin = Pin("button")
+    led_pin = Pin("led")
+    blinky = Blinky(button_pinint, button_pin, led_pin)
+    assert blinky.button_pinint is button_pinint
+    assert blinky.button_pin is button_pin
+    assert blinky.led_pin is led_pin

@@ -192,30 +192,30 @@ def pinint_acquire(pinint_ptr: cffi.FFI.CData,
 
 
 class Blinky:
-    def __init__(self, in_pinint: Pinint, in_pin: Pin, out_pin: Pin) -> None:
-        if not isinstance(in_pinint, Pinint):
-            raise TypeError(in_pinint)
-        if not isinstance(in_pin, Pin):
-            raise TypeError(in_pin)
-        if not isinstance(out_pin, Pin):
-            raise TypeError(out_pin)
+    def __init__(self, button_pinint: Pinint, button_pin: Pin, led_pin: Pin) -> None:
+        if not isinstance(button_pinint, Pinint):
+            raise TypeError(button_pinint)
+        if not isinstance(button_pin, Pin):
+            raise TypeError(button_pin)
+        if not isinstance(led_pin, Pin):
+            raise TypeError(led_pin)
         self._cdata = blinky_cffi.ffi.new("struct blinky *")
-        self._in_pinint = in_pinint
-        self._in_pin = in_pin
-        self._out_pin = out_pin
-        blinky_cffi.lib.blinky_init(self._cdata, self._in_pinint.cdata, self._in_pin.cdata, self._out_pin.cdata)
+        self._button_pinint = button_pinint
+        self._button_pin = button_pin
+        self._led_pin = led_pin
+        blinky_cffi.lib.blinky_init(self._cdata, self._button_pinint.cdata, self._button_pin.cdata, self._led_pin.cdata)
 
     @property
-    def in_pinint(self) -> Pinint:
-        return self._in_pinint
+    def button_pinint(self) -> Pinint:
+        return self._button_pinint
 
     @property
-    def in_pin(self) -> Pin:
-        return self._in_pin
+    def button_pin(self) -> Pin:
+        return self._button_pin
 
     @property
-    def out_pin(self) -> Pin:
-        return self._out_pin
+    def led_pin(self) -> Pin:
+        return self._led_pin
 
 
 class BitbangSpi:
