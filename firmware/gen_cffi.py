@@ -20,8 +20,8 @@ if args.callbacks_file:
 
 with open(args.preproc_file, "rt", encoding="utf-8") as f:
     declarations = f.read()
-# Remove compiler-defined macros
-declarations = re.sub(r"^#define __\w+__",
+# Remove compiler-defined macros and other special macros
+declarations = re.sub(r"^#define (__\w+__|CFFI).*$",
                       "",
                       declarations,
                       flags=re.MULTILINE)
