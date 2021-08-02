@@ -10,6 +10,7 @@ enum pinint_avr_id {
     PININT_AVR_INT2,
     PININT_AVR_INT3,
     PININT_AVR_INT6,
+    PININT_AVR_COUNT,
 };
 
 #define PININT_AVR_MAKE(pinint_id)                       \
@@ -26,3 +27,5 @@ struct pinint {
     actor_sig rising_sig;
     actor_sig falling_sig;
 };
+
+void pinint_system_init(void);

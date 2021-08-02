@@ -85,7 +85,7 @@ void actor_system_loop(void)
 
 static inline struct msg *pop_msg(struct list_head *list)
 {
-    struct msg *msg = list_first_entry_or_null(&free_msgs, struct msg, list);
+    struct msg *msg = list_first_entry_or_null(list, struct msg, list);
     if (msg != NULL) {
         list_del(&msg->list);
     }
