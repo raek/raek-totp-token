@@ -50,6 +50,19 @@ def hotp(secret: bytes, counter: int) -> str:
     return cast(bytes, pure_cffi.ffi.string(output)).decode("ascii")
 
 
+FONT_BLANK_GLYPH: int = pure_cffi.lib.FONT_BLANK_GLYPH
+
+
+def font_lookup(char: str) -> int:
+    return cast(int, pure_cffi.lib.font_lookup(char.encode("latin1")))
+
+
+def font_render(width: int, string: str) -> bytes:
+    buffer = pure_cffi.ffi.new("uint8_t[]", width)
+    pure_cffi.lib.font_render(buffer, width, string.encode("latin1"))
+    return bytes(buffer)
+
+
 Sig = int
 
 
