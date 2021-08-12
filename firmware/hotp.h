@@ -14,4 +14,4 @@ struct hotp {
     uint8_t hmac_sha1_code[HMAC_SHA1_CODE_BYTES];
 };
 
-void hotp(struct hotp *scratchpad, uint8_t *secret, size_t secret_length, uint64_t counter, char *digits_output);
+void hotp(struct hotp *scratchpad, const uint8_t *secret, size_t secret_length, uint64_t counter, char *digits_output);

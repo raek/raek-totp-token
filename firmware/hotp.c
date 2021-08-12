@@ -4,7 +4,7 @@ static uint32_t dynamic_truncation(const uint8_t *hash);
 static void write_u64be(uint8_t *buffer, uint64_t value);
 static uint32_t read_u32be(const uint8_t *buffer);
 
-void hotp(struct hotp *scratchpad, uint8_t *secret, size_t secret_length, uint64_t counter, char *digits_output)
+void hotp(struct hotp *scratchpad, const uint8_t *secret, size_t secret_length, uint64_t counter, char *digits_output)
 {
     write_u64be(scratchpad->counter_bytes, counter);
     hmac_sha1(&scratchpad->hmac_sha1_scratchpad,
