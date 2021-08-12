@@ -1,3 +1,10 @@
+actor_init
+actor_post
+timer_init
+timer_set_oneshot
+timer_set_repeating
+timer_set_fixed_count
+timer_cancel
 pin_set_dir
 pin_write
 pin_read

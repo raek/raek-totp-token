@@ -1,7 +1,7 @@
 import pytest
 from typing import Any, cast
 
-from firmware import Pin, Pinint, Blinky
+from firmware import Pin, Pinint, Blinky, step_time_forward
 
 
 def test_init_and_properties() -> None:
@@ -21,17 +21,21 @@ def test_init_wrong_types() -> None:
 def test_run() -> None:
     button_pinint = Pinint("button")
     button_pin = Pin("button")
-    button_pin.input = False
+    button_pin.input = True
     led_pin = Pin("led")
     blinky = Blinky(button_pinint, button_pin, led_pin)
+    assert Blinky.FLASH_COUNT >= 0
     assert button_pin.dir_is_output is False
     assert led_pin.dir_is_output is True
-    assert led_pin.output is True
-
-    button_pinint.trigger_rise()
     assert led_pin.output is False
+
     button_pinint.trigger_fall()
-    assert led_pin.output is True
+    for _ in range(Blinky.FLASH_COUNT):
+        assert led_pin.output is True
+        step_time_forward(Blinky.FLASH_PERIOD_MS // 2)
+        assert led_pin.output is False
+        step_time_forward(Blinky.FLASH_PERIOD_MS // 2)
+    assert led_pin.output is False
 
     del blinky
 

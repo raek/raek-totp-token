@@ -62,8 +62,25 @@ static inline void list_del(struct list_head *entry)
 #define list_entry(ptr, type, member) \
     container_of(ptr, type, member)
 
+#define list_first_entry(ptr, type, member) \
+	list_entry((ptr)->next, type, member)
+
+#define list_next_entry(pos, member) \
+	list_entry((pos)->member.next, typeof(*(pos)), member)
+
 #define list_first_entry_or_null(ptr, type, member) ({                  \
             struct list_head *head__ = (ptr);                           \
             struct list_head *pos__ = head__->next;                     \
             pos__ != head__ ? list_entry(pos__, type, member) : NULL;   \
         })
+
+#define list_for_each_entry(pos, head, member)				\
+	for (pos = list_first_entry(head, typeof(*pos), member);	\
+	     &pos->member != (head);					\
+	     pos = list_next_entry(pos, member))
+
+#define list_for_each_entry_safe(pos, n, head, member)			\
+	for (pos = list_first_entry(head, typeof(*pos), member),	\
+		n = list_next_entry(pos, member);			\
+	     &pos->member != (head); 					\
+	     pos = n, n = list_next_entry(n, member))

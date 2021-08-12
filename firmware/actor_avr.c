@@ -69,7 +69,7 @@ void actor_system_loop(void)
         cli();
         struct msg *msg = pop_msg(&incoming_msgs);
         if (msg == NULL) {
-            set_sleep_mode(SLEEP_MODE_EXT_STANDBY);
+            set_sleep_mode(SLEEP_MODE_IDLE);
             sleep_enable();
             sei();
             sleep_cpu();

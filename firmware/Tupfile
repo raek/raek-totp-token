@@ -1,8 +1,8 @@
 PYTHON      = python
 MCU         = atmega32u4
-CFLAGS      = -std=c99 -g -Werror -Wall -Wextra -Wno-unused-parameter
+CFLAGS      = -std=gnu99 -g -Werror -Wall -Wextra -Wno-unused-parameter
 AVR_CFLAGS  = -mmcu=$(MCU) -Os -DF_CPU=8000000ul -flto
-HOST_CFLAGS = -fpic `$(PYTHON) get_python_cflags.py`
+HOST_CFLAGS = -fpic `$(PYTHON) get_python_cflags.py` -DCFFI
 
 !cc_avr     = |> ^ CC %o^    avr-gcc $(CFLAGS) $(AVR_CFLAGS)                         -c %f -o %o |>
 !ld_avr     = |> ^ LD %o^    avr-gcc $(CFLAGS) $(AVR_CFLAGS) -Wl,--cref -Wl,-Map=%O.map %f -o %o |> | %O.map
@@ -31,7 +31,7 @@ common_sources += blinky.c spi_bitbang.c as1107.c
 
 
 
-avr_sources = actor_avr.c pin_avr.c pinint_avr.c
+avr_sources = actor_avr.c timer_avr.c pin_avr.c pinint_avr.c
 avr_main_sources = demo_as1107.c demo_blinky.c
 
 : foreach $(common_sources) $(avr_sources) |> !cc_avr |> %B.avr.o {avr_objects}
@@ -47,7 +47,7 @@ avr_main_sources = demo_as1107.c demo_blinky.c
 
 
 
-host_sources = actor_host.c pure_cffi.c blinky_cffi.c spi_bitbang_cffi.c
+host_sources = pure_cffi.c blinky_cffi.c spi_bitbang_cffi.c
 cffi_headers = pure_cffi.h blinky.h spi_bitbang.h
 
 : foreach $(cffi_headers) |> !preproc |> %B.i
@@ -60,5 +60,5 @@ cffi_headers = pure_cffi.h blinky.h spi_bitbang.h
 : foreach $(host_sources)   |> !cc_host          |> %B.host.o
 
 : pure_cffi.host.o datetime.host.o sha1.host.o hmac_sha1.host.o hotp.host.o |> !so_host |> pure_cffi.so
-: blinky_cffi.host.o blinky.host.o actor_host.host.o |> !so_host |> blinky_cffi.so
+: blinky_cffi.host.o blinky.host.o |> !so_host |> blinky_cffi.so
 : spi_bitbang_cffi.host.o spi_bitbang.host.o |> !so_host |> spi_bitbang_cffi.so

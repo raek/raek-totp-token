@@ -1,4 +1,5 @@
 from typing import Callable, NamedTuple, Optional, cast
+from weakref import WeakValueDictionary
 
 import cffi  # type: ignore
 
@@ -52,11 +53,150 @@ def hotp(secret: bytes, counter: int) -> str:
 Sig = int
 
 
-class Actor(NamedTuple):
-    cdata: cffi.FFI.CData
+class Actor:
+    def __init__(self, cdata: cffi.FFI.CData) -> None:
+        self._cdata = cdata
+        self._children: list[cffi.FFI.CData] = []
+
+    def add_child(self, child: cffi.FFI.CData) -> None:
+        self._children.append(child)
 
     def post(self, sig: Sig) -> None:
-        self.cdata.dispatcher(self.cdata, sig)
+        self._cdata.dispatcher(self.cdata, sig)
+
+    @property
+    def cdata(self) -> cffi.FFI.CData:
+        return self._cdata
+
+
+ACTORS: WeakValueDictionary[cffi.FFI.CData, Actor] = WeakValueDictionary()
+LAST_ACTOR: Optional[Actor] = None
+
+
+def get_last_actor() -> Actor:
+    global LAST_ACTOR
+    assert LAST_ACTOR is not None
+    actor = LAST_ACTOR
+    LAST_ACTOR = None
+    return actor
+
+
+Dispatcher = Callable[[cffi.FFI.CData, Sig], None]
+
+
+@blinky_cffi.ffi.def_extern()
+def actor_init(actor_ptr: cffi.FFI.CData, dispatcher: Dispatcher) -> None:
+    global LAST_ACTOR
+    assert actor_ptr not in ACTORS
+    actor_ptr.dispatcher = dispatcher
+    actor = Actor(actor_ptr)
+    ACTORS[actor_ptr] = actor
+    LAST_ACTOR = actor
+
+
+@blinky_cffi.ffi.def_extern()
+def actor_post(actor_ptr: cffi.FFI.CData, sig: Sig) -> None:
+    ACTORS[actor_ptr].post(sig)
+
+
+Instant = int  # milliseconds
+Duration = int  # milliseconds
+
+
+CURRENT_TIME: Instant = 0
+
+
+class Timer:
+    def __init__(self, cdata: cffi.FFI.CData, recipient: Actor, sig: Sig) -> None:
+        self._cdata = cdata
+        self._cdata.recipient = recipient.cdata
+        self._cdata.sig = sig
+        self._cdata.active = False
+
+    def set_oneshot(self, delay: Duration) -> None:
+        self._cdata.active = False
+        self._cdata.target = CURRENT_TIME + delay
+        self._cdata.repeating = False
+        self._cdata.active = True
+
+    def set_repeating(self, interval: Duration) -> None:
+        self._cdata.active = False
+        self._cdata.target = CURRENT_TIME + interval
+        self._cdata.repeating = True
+        self._cdata.interval = interval
+        self._cdata.fixed_count = False
+        self._cdata.active = True
+
+    def set_fixed_count(self, interval: Duration, count: int) -> None:
+        self._cdata.active = False
+        if count <= 0:
+            return
+        self._cdata.target = CURRENT_TIME + interval
+        self._cdata.repeating = True
+        self._cdata.interval = interval
+        self._cdata.fixed_count = True
+        self._cdata.count = count
+        self._cdata.active = True
+
+    def cancel(self) -> None:
+        self._cdata.active = False
+
+    def service(self) -> None:
+        if not self._cdata.active:
+            return
+        if self._cdata.target != CURRENT_TIME:
+            return
+        ACTORS[self._cdata.recipient].post(self._cdata.sig)
+        if self._cdata.repeating:
+            self._cdata.target += self._cdata.interval
+            if self._cdata.fixed_count:
+                self._cdata.count -= 1
+                if self._cdata.count == 0:
+                    self._cdata.active = False
+
+    @property
+    def cdata(self) -> cffi.FFI.CData:
+        return self._cdata
+
+
+TIMERS: WeakValueDictionary[cffi.FFI.CData, Timer] = WeakValueDictionary()
+
+
+def step_time_forward(duration: Duration) -> None:
+    global CURRENT_TIME
+    for _ in range(duration):
+        CURRENT_TIME += 1
+        for timer in TIMERS.values():
+            timer.service()
+
+
+@blinky_cffi.ffi.def_extern()
+def timer_init(timer_ptr: cffi.FFI.CData, recipient_ptr: cffi.FFI.CData, sig: Sig) -> None:
+    assert timer_ptr not in TIMERS
+    recipient = ACTORS[recipient_ptr]
+    timer = Timer(timer_ptr, recipient, sig)
+    recipient.add_child(timer)
+    TIMERS[timer_ptr] = timer
+
+
+@blinky_cffi.ffi.def_extern()
+def timer_set_oneshot(timer_ptr: cffi.FFI.CData, delay: Duration) -> None:
+    TIMERS[timer_ptr].set_oneshot(delay)
+
+
+@blinky_cffi.ffi.def_extern()
+def timer_set_repeating(timer_ptr: cffi.FFI.CData, interval: Duration) -> None:
+    TIMERS[timer_ptr].set_repeating(interval)
+
+
+@blinky_cffi.ffi.def_extern()
+def timer_set_fixed_count(timer_ptr: cffi.FFI.CData, interval: Duration, count: int) -> None:
+    TIMERS[timer_ptr].set_fixed_count(interval, count)
+
+
+@blinky_cffi.ffi.def_extern()
+def timer_cancel(timer_ptr: cffi.FFI.CData) -> None:
+    TIMERS[timer_ptr].cancel()
 
 
 class PinCallback:
@@ -182,16 +322,19 @@ class Pinint:
 
 @blinky_cffi.ffi.def_extern()
 def pinint_acquire(pinint_ptr: cffi.FFI.CData,
-                   recipient_cdata: cffi.FFI.CData,
+                   recipient_ptr: cffi.FFI.CData,
                    rising_sig: Sig,
                    falling_sig: Sig) -> None:
     pinint_void_ptr = ffi.cast("void *", pinint_ptr)
     pinint = cast(Pinint, ffi.from_handle(pinint_void_ptr))
-    recipient = Actor(recipient_cdata)
+    recipient = ACTORS[recipient_ptr]
     pinint.acquire(recipient, rising_sig, falling_sig)
 
 
 class Blinky:
+    FLASH_PERIOD_MS = blinky_cffi.lib.BLINKY_FLASH_PERIOD_MS
+    FLASH_COUNT = blinky_cffi.lib.BLINKY_FLASH_COUNT
+
     def __init__(self, button_pinint: Pinint, button_pin: Pin, led_pin: Pin) -> None:
         if not isinstance(button_pinint, Pinint):
             raise TypeError(button_pinint)
@@ -204,6 +347,7 @@ class Blinky:
         self._button_pin = button_pin
         self._led_pin = led_pin
         blinky_cffi.lib.blinky_init(self._cdata, self._button_pinint.cdata, self._button_pin.cdata, self._led_pin.cdata)
+        self._actor = get_last_actor()
 
     @property
     def button_pinint(self) -> Pinint:
