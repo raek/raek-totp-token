@@ -30,9 +30,9 @@ def test_non_asci_chars_blank() -> None:
 
 def test_render_short() -> None:
     display_width = 8
-    text = "katt"
+    text = "hello"
     text_width = len(text)
-    glyphs = font_render(display_width, "katt")
+    glyphs = font_render(display_width, text)
     assert len(glyphs) == display_width
     for glyph, char in zip(glyphs[:text_width], text):
         assert glyph == font_lookup(char)
@@ -42,8 +42,8 @@ def test_render_short() -> None:
 
 def test_render_too_long() -> None:
     display_width = 4
-    text = "katt"
-    glyphs = font_render(display_width, "katt")
+    text = "hello"
+    glyphs = font_render(display_width, text)
     assert len(glyphs) == display_width
     for glyph, char in zip(glyphs, text[:display_width]):
         assert glyph == font_lookup(char)
