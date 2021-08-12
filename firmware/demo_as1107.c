@@ -35,7 +35,7 @@ int main(int argc, char **argv)
     }
     as1107_set_intensity(&as1107, 0);
     for (;;) {
-        as1107_display_glyphs(&as1107, glyphs);
+        as1107_show_glyphs(&as1107, glyphs);
         for (int i = 0; i <= AS1107_INTENSITY_MAX; i++) {
             as1107_set_intensity(&as1107, i);
             _delay_ms(T);
