@@ -69,4 +69,6 @@ void as1107_blank(struct as1107 *as1107)
 void as1107_resume(struct as1107 *as1107)
 {
     set_reg(as1107, REG_SHUTDOWN, SHUTDOWN_KEEP_FEATURE | SHUTDOWN_NORMAL);
+    // Scan Limit resets to 0 for unknown reasons when exiting shutdown mode
+    set_reg(as1107, REG_SCAN_LIMIT, 7);
 }
