@@ -27,11 +27,11 @@ HOST_CFLAGS = -fpic `$(PYTHON) get_python_cflags.py` -DCFFI
 
 
 common_sources =  datetime.c sha1.c hmac_sha1.c hotp.c font.c
-common_sources += blinky.c spi_bitbang.c as1107.c display_as1107.c
+common_sources += blinky.c spi_bitbang.c as1107.c display_as1107.c debug_common.c
 
 
 
-avr_sources = actor_avr.c timer_avr.c pin_avr.c pinint_avr.c
+avr_sources = actor_avr.c timer_avr.c pin_avr.c pinint_avr.c debug_avr.c
 avr_main_sources = demo_display.c demo_blinky.c demo_hotp.c
 
 : foreach $(common_sources) $(avr_sources) |> !cc_avr |> %B.avr.o {avr_objects}
@@ -48,7 +48,7 @@ avr_main_sources = demo_display.c demo_blinky.c demo_hotp.c
 
 
 
-host_sources = pure_cffi.c blinky_cffi.c spi_bitbang_cffi.c
+host_sources = pure_cffi.c debug_host.c blinky_cffi.c spi_bitbang_cffi.c
 cffi_headers = pure_cffi.h blinky.h spi_bitbang.h
 
 : foreach $(cffi_headers) |> !preproc |> %B.i
@@ -60,6 +60,6 @@ cffi_headers = pure_cffi.h blinky.h spi_bitbang.h
 : foreach $(common_sources) |> !cc_host_coverage |> %B.host.o
 : foreach $(host_sources)   |> !cc_host          |> %B.host.o
 
-: pure_cffi.host.o datetime.host.o sha1.host.o hmac_sha1.host.o hotp.host.o font.host.o |> !so_host |> pure_cffi.so
-: blinky_cffi.host.o blinky.host.o |> !so_host |> blinky_cffi.so
-: spi_bitbang_cffi.host.o spi_bitbang.host.o |> !so_host |> spi_bitbang_cffi.so
+: pure_cffi.host.o debug_common.host.o debug_host.host.o datetime.host.o sha1.host.o hmac_sha1.host.o hotp.host.o font.host.o |> !so_host |> pure_cffi.so
+: blinky_cffi.host.o blinky.host.o debug_common.host.o debug_host.host.o |> !so_host |> blinky_cffi.so
+: spi_bitbang_cffi.host.o spi_bitbang.host.o debug_common.host.o debug_host.host.o |> !so_host |> spi_bitbang_cffi.so
