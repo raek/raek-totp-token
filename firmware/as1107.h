@@ -31,4 +31,5 @@ void as1107_init(struct as1107 *as1107, struct spi *spi);
 void as1107_set_test_mode(struct as1107 *as1107, bool test_mode_on);
 void as1107_set_intensity(struct as1107 *as1107, uint8_t intensity);
 void as1107_show_glyphs(struct as1107 *as1107, const uint8_t *glyphs);
-void as1107_clear(struct as1107 *as1107);
+void as1107_blank(struct as1107 *as1107);
+void as1107_resume(struct as1107 *as1107);

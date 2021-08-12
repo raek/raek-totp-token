@@ -34,8 +34,9 @@ int main(int argc, char **argv)
         glyphs[i] = 0xff;
     }
     as1107_set_intensity(&as1107, 0);
+    as1107_show_glyphs(&as1107, glyphs);
     for (;;) {
-        as1107_show_glyphs(&as1107, glyphs);
+        as1107_resume(&as1107);
         for (int i = 0; i <= AS1107_INTENSITY_MAX; i++) {
             as1107_set_intensity(&as1107, i);
             _delay_ms(T);
@@ -44,7 +45,7 @@ int main(int argc, char **argv)
             as1107_set_intensity(&as1107, i);
             _delay_ms(T);
         }
-        as1107_clear(&as1107);
+        as1107_blank(&as1107);
         _delay_ms(T);
     }
     return 0;

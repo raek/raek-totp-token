@@ -58,11 +58,15 @@ void as1107_show_glyphs(struct as1107 *as1107, const uint8_t *glyphs)
     for (int i = 0; i < AS1107_GLYPH_COUNT; i++) {
         set_reg(as1107, (uint8_t) (REG_DIGIT_0 + i), glyphs[i]);
     }
+    as1107_resume(as1107);
 }
 
-void as1107_clear(struct as1107 *as1107)
+void as1107_blank(struct as1107 *as1107)
 {
-    for (int i = 0; i < AS1107_GLYPH_COUNT; i++) {
-        set_reg(as1107, (uint8_t) (REG_DIGIT_0 + i), 0);
-    }
+    set_reg(as1107, REG_SHUTDOWN, SHUTDOWN_KEEP_FEATURE);
+}
+
+void as1107_resume(struct as1107 *as1107)
+{
+    set_reg(as1107, REG_SHUTDOWN, SHUTDOWN_KEEP_FEATURE | SHUTDOWN_NORMAL);
 }
