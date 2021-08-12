@@ -175,7 +175,7 @@ static void put_byte_into_u32be(struct sha1 *sha1, uint8_t value)
 {
     uint32_t *word = &sha1->w[sha1->pos / 4];
     size_t shift = (3 - (sha1->pos % 4)) * 8;
-    *word = *word | (value << shift);
+    *word = *word | ((uint32_t) value << shift);
     sha1->pos++;
 }
 
