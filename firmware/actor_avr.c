@@ -65,14 +65,18 @@ static inline void post(struct actor *recipient, actor_sig sig)
 
 void actor_system_loop(void)
 {
+    DDRC |= (1<<7);
+    PORTC |= (1<<7);
     for (;;) {
         cli();
         struct msg *msg = pop_msg(&incoming_msgs);
         if (msg == NULL) {
             set_sleep_mode(SLEEP_MODE_IDLE);
             sleep_enable();
+            PORTC &= ~(1<<7);
             sei();
             sleep_cpu();
+            PORTC |= (1<<7);
             continue;
         }
         struct actor *recipient = msg->recipient;
