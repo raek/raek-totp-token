@@ -32,13 +32,14 @@ common_sources += blinky.c spi_bitbang.c as1107.c display_as1107.c
 
 
 avr_sources = actor_avr.c timer_avr.c pin_avr.c pinint_avr.c
-avr_main_sources = demo_display.c demo_blinky.c
+avr_main_sources = demo_display.c demo_blinky.c demo_hotp.c
 
 : foreach $(common_sources) $(avr_sources) |> !cc_avr |> %B.avr.o {avr_objects}
 : foreach $(avr_main_sources) |> !cc_avr |> %B.avr.o
 
 : demo_display.avr.o {avr_objects} |> !ld_avr |> demo_display.avr.elf {avr_binaries}
 : demo_blinky.avr.o {avr_objects} |> !ld_avr |> demo_blinky.avr.elf {avr_binaries}
+: demo_hotp.avr.o {avr_objects} |> !ld_avr |> demo_hotp.avr.elf {avr_binaries}
 
 : foreach {avr_binaries}      |> !dis_avr   |> %B.s {avr_disassemblies}
 : foreach {avr_binaries}      |> !hex_avr   |> %B.hex
