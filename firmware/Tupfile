@@ -27,17 +27,17 @@ HOST_CFLAGS = -fpic `$(PYTHON) get_python_cflags.py` -DCFFI
 
 
 common_sources =  datetime.c sha1.c hmac_sha1.c hotp.c font.c
-common_sources += blinky.c spi_bitbang.c as1107.c
+common_sources += blinky.c spi_bitbang.c as1107.c display_as1107.c
 
 
 
 avr_sources = actor_avr.c timer_avr.c pin_avr.c pinint_avr.c
-avr_main_sources = demo_as1107.c demo_blinky.c
+avr_main_sources = demo_display.c demo_blinky.c
 
 : foreach $(common_sources) $(avr_sources) |> !cc_avr |> %B.avr.o {avr_objects}
 : foreach $(avr_main_sources) |> !cc_avr |> %B.avr.o
 
-: demo_as1107.avr.o      {avr_objects} |> !ld_avr |> demo_as1107.avr.elf {avr_binaries}
+: demo_display.avr.o {avr_objects} |> !ld_avr |> demo_display.avr.elf {avr_binaries}
 : demo_blinky.avr.o {avr_objects} |> !ld_avr |> demo_blinky.avr.elf {avr_binaries}
 
 : foreach {avr_binaries}      |> !dis_avr   |> %B.s {avr_disassemblies}
