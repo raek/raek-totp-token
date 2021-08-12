@@ -62,4 +62,7 @@ void as1107_display_glyphs(struct as1107 *as1107, const uint8_t *glyphs)
 
 void as1107_clear(struct as1107 *as1107)
 {
+    for (int i = 0; i < AS1107_GLYPH_COUNT; i++) {
+        set_reg(as1107, (uint8_t) (REG_DIGIT_0 + i), 0);
+    }
 }
