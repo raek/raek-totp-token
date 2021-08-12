@@ -1,5 +1,6 @@
 #pragma once
 
+#define DISPLAY_CHAR_COUNT 8
 #define DISPLAY_INTENSITY_MAX 15
 
 struct display;
