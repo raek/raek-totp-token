@@ -25,6 +25,11 @@ declarations = re.sub(r"^#define (__\w+__|CFFI).*$",
                       "",
                       declarations,
                       flags=re.MULTILINE)
+# Remove function-like macros
+declarations = re.sub(r"^#define \w+\(.*$",
+                      "",
+                      declarations,
+                      flags=re.MULTILINE)
 # Make macro value always be "..."
 declarations = re.sub(r"^(#define \w+).*$",
                       lambda m: m.group(1) + " ...",

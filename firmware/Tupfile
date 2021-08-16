@@ -16,7 +16,7 @@ HOST_CFLAGS = -fpic `$(PYTHON) get_python_cflags.py` -DCFFI
 !cc_host_coverage = |> ^ CC %o^    gcc $(CFLAGS) $(HOST_CFLAGS) --coverage -c      %f -o %o |> | %O.gcno
 !so_host          = |> ^ SO %o^    gcc $(CFLAGS) $(HOST_CFLAGS) --coverage -shared %f -o %o |>
 
-!preproc = |> ^ CPP %o^ gcc -undef -nostdinc -D CFFI -I dummy_stdlib -P -dN -E %f -o %o |>
+!preproc = |> ^ CPP %o^ gcc -undef -nostdinc -D CFFI -I dummy_stdlib -P -dD -E %f -o %o |>
 
 !graphviz = |> ^ DOT %o^ dot -Tpng %f > %o |>
 
