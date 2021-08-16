@@ -11,6 +11,47 @@ import spi_bitbang_cffi  # type: ignore
 ffi = cffi.FFI()
 
 
+class ResultError(Exception):
+    pass
+
+
+RESULT_ERROR_IS_SET: bool = False
+RESULT_ERROR_INFO: cffi.FFI.CData = pure_cffi.ffi.new("struct result_error_info *")
+
+
+def raise_if_error(result: int) -> None:
+    if result != pure_cffi.lib.RESULT_OK:
+        assert RESULT_ERROR_IS_SET
+        file = pure_cffi.ffi.string(RESULT_ERROR_INFO.file).decode("utf8")
+        line = RESULT_ERROR_INFO.line
+        message = pure_cffi.ffi.string(RESULT_ERROR_INFO.message).decode("utf8")
+        raise ResultError(f"{file}:{line}: {message}")
+
+
+@pure_cffi.ffi.def_extern()
+@blinky_cffi.ffi.def_extern()
+def result_clear_error() -> None:
+    global RESULT_ERROR_IS_SET
+    RESULT_ERROR_IS_SET = False
+
+
+@pure_cffi.ffi.def_extern()
+@blinky_cffi.ffi.def_extern()
+def result_set_error(file: bytes, line: int, message: bytes) -> None:
+    global RESULT_ERROR_IS_SET
+    RESULT_ERROR_INFO.file = file
+    RESULT_ERROR_INFO.line = line
+    RESULT_ERROR_INFO.message = message
+    RESULT_ERROR_IS_SET = True
+
+
+@pure_cffi.ffi.def_extern()
+@blinky_cffi.ffi.def_extern()
+def result_get_error() -> cffi.FFI.CData:
+    assert RESULT_ERROR_IS_SET
+    return RESULT_ERROR_INFO
+
+
 datetime_is_valid = pure_cffi.lib.datetime_is_valid
 
 
@@ -75,7 +116,7 @@ class Actor:
         self._children.append(child)
 
     def post(self, sig: Sig) -> None:
-        self._cdata.dispatcher(self.cdata, sig)
+        raise_if_error(self._cdata.dispatcher(self.cdata, sig))
 
     @property
     def cdata(self) -> cffi.FFI.CData:

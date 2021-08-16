@@ -31,7 +31,7 @@ common_sources += blinky.c spi_bitbang.c as1107.c display_as1107.c debug_common.
 
 
 
-avr_sources = actor_avr.c timer_avr.c pin_avr.c pinint_avr.c debug_avr.c
+avr_sources = result.c halt_avr.c actor_avr.c timer_avr.c pin_avr.c pinint_avr.c debug_avr.c
 avr_main_sources = demo_display.c demo_blinky.c demo_hotp.c
 
 : foreach $(common_sources) $(avr_sources) |> !cc_avr |> %B.avr.o {avr_objects}
@@ -53,7 +53,7 @@ cffi_headers = pure_cffi.h blinky.h spi_bitbang.h
 
 : foreach $(cffi_headers) |> !preproc |> %B.i
 
-: pure_cffi.h pure_cffi.i |> ^ CFFI %o^ $(PYTHON) gen_cffi.py -m pure_cffi -f %1f -i %2f -o %o |> pure_cffi.c
+: pure_cffi.h pure_cffi.i callbacks.txt|> ^ CFFI %o^ $(PYTHON) gen_cffi.py -m pure_cffi -f %1f -i %2f -c %3f -o %o |> pure_cffi.c
 : blinky.h blinky.i callbacks.txt |> ^ CFFI %o^ $(PYTHON) gen_cffi.py -m blinky_cffi -f %1f -i %2f -c %3f -o %o |> blinky_cffi.c
 : spi_bitbang.h spi_bitbang.i callbacks.txt |> ^ CFFI %o^ $(PYTHON) gen_cffi.py -m spi_bitbang_cffi -f %1f -i %2f -c %3f -o %o |> spi_bitbang_cffi.c
 

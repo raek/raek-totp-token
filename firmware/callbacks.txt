@@ -1,3 +1,6 @@
+result_clear_error
+result_set_error
+result_get_error
 actor_init
 actor_post
 timer_init

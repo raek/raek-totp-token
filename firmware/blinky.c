@@ -2,6 +2,7 @@
 #include "blinky.h"
 #include "pin.h"
 #include "pinint.h"
+#include "result.h"
 #include "timer.h"
 
 enum blinky_sig {
@@ -25,7 +26,7 @@ void blinky_init(struct blinky *blinky, struct pinint *button_pinint, struct pin
     pin_write(blinky->led_pin, false);
 }
 
-void blinky_actor_dispatcher(struct actor *actor, actor_sig sig)
+enum result blinky_actor_dispatcher(struct actor *actor, actor_sig sig)
 {
     struct blinky *blinky = (struct blinky *) actor;
     switch (sig) {
@@ -34,11 +35,14 @@ void blinky_actor_dispatcher(struct actor *actor, actor_sig sig)
         pin_write(blinky->led_pin, blinky->led_state);
         timer_set_fixed_count(&blinky->flash_timer, BLINKY_FLASH_PERIOD_MS / 2, (BLINKY_FLASH_COUNT * 2) - 1);
         break;
+    case SIG_BUTTON_RELEASE:
+        break;
     case SIG_FLASH_TIMER:
         blinky->led_state = !blinky->led_state;
         pin_write(blinky->led_pin, blinky->led_state);
         break;
     default:
-        break;
+        return ERROR("invalid signal");
     }
+    return RESULT_OK;
 }

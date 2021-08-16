@@ -5,7 +5,9 @@
 
 #include "actor.h"
 #include "actor_avr.h"
+#include "halt.h"
 #include "list.h"
+#include "result.h"
 
 #define MSG_QUEUE_SIZE 10
 
@@ -54,8 +56,8 @@ static inline void post(struct actor *recipient, actor_sig sig)
 {
     struct msg *msg = pop_msg(&free_msgs);
     if (msg == NULL) {
-        // No free messages left. Drop message to shed load.
-        // TODO: log error.
+        (void) ERROR("No free messages left.");
+        halt();
     } else {
         msg->recipient = recipient;
         msg->sig = sig;
@@ -83,7 +85,10 @@ void actor_system_loop(void)
         actor_sig sig = msg->sig;
         push_msg(&free_msgs, msg);
         sei();
-        recipient->dispatcher(recipient, sig);
+        enum result result = recipient->dispatcher(recipient, sig);
+        if (result != RESULT_OK) {
+            halt();
+        }
     }
 }
 

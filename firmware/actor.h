@@ -2,13 +2,15 @@
 
 #include <stddef.h>
 
+#include "result.h"
+
 #define ACTOR_NO_SIG -1
 
 struct actor;
 
 typedef int actor_sig;
 
-typedef void (*actor_dispatcher)(struct actor *actor, actor_sig sig);
+typedef enum result (*actor_dispatcher)(struct actor *actor, actor_sig sig);
 
 struct actor {
     actor_dispatcher dispatcher;

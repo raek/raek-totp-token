@@ -1,8 +1,9 @@
 #include "actor_avr.h"
-#include "timer_avr.h"
+#include "blinky.h"
+#include "debug.h"
 #include "pin_avr.h"
 #include "pinint_avr.h"
-#include "blinky.h"
+#include "timer_avr.h"
 
 int main(int argc, char **argv)
 {
@@ -11,6 +12,7 @@ int main(int argc, char **argv)
     struct pin led_pin = PIN_AVR_MAKE(D, 0);
     struct blinky blinky;
 
+    debug_init();
     actor_system_init();
     timer_system_init();
     pinint_system_init();
