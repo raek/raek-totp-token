@@ -13,20 +13,20 @@ enum blinky_sig {
 
 void blinky_init(struct blinky *blinky, struct pinint *button_pinint, struct pin *button_pin, struct pin *led_pin)
 {
-    actor_init(&blinky->actor, blinky_actor_dispatcher);
+    actor_init(&blinky->actor, blinky_dispatch);
     timer_init(&blinky->flash_timer, &blinky->actor, SIG_FLASH_TIMER);
     pinint_acquire(button_pinint, &blinky->actor, SIG_BUTTON_RELEASE, SIG_BUTTON_PRESS);
-    
+
     blinky->button_pinint = button_pinint;
     blinky->button_pin = button_pin;
     blinky->led_pin = led_pin;
-    
+
     pin_set_dir(blinky->button_pin, PIN_DIR_INPUT);
     pin_set_dir(blinky->led_pin, PIN_DIR_OUTPUT);
     pin_write(blinky->led_pin, false);
 }
 
-enum result blinky_actor_dispatcher(struct actor *actor, actor_sig sig)
+enum result blinky_dispatch(struct actor *actor, actor_sig sig)
 {
     struct blinky *blinky = (struct blinky *) actor;
     switch (sig) {

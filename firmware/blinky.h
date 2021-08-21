@@ -19,4 +19,4 @@ struct blinky {
 };
 
 void blinky_init(struct blinky *blinky, struct pinint *button_pinint, struct pin *button_pin, struct pin *led_pin);
-enum result blinky_actor_dispatcher(struct actor *actor, actor_sig sig);
+enum result blinky_dispatch(struct actor *actor, actor_sig sig);
