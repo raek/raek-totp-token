@@ -3,15 +3,22 @@
 #include "actor_avr.h"
 #include "app.h"
 #include "as1107.h"
+#include "blinky.h"
 #include "debug.h"
 #include "display.h"
 #include "display_as1107.h"
 #include "pin_avr.h"
+#include "pinint_avr.h"
 #include "spi_bitbang.h"
 #include "timer_avr.h"
 
 int main(int argc, char **argv)
 {
+    struct pinint button_pinint = PININT_AVR_MAKE(INT1);
+    struct pin button_pin = PIN_AVR_MAKE(D, 1);
+    struct pin led_pin = PIN_AVR_MAKE(D, 0);
+    struct blinky blinky;
+
     struct pin din = PIN_AVR_MAKE(B, 2);
     struct pin clk = PIN_AVR_MAKE(B, 1);
     struct pin csn = PIN_AVR_MAKE(D, 2);
@@ -33,6 +40,8 @@ int main(int argc, char **argv)
     debug_init();
     actor_system_init();
     timer_system_init();
+    pinint_system_init();
+    blinky_init(&blinky, &button_pinint, &button_pin, &led_pin);
     app_init(&app, &display);
     actor_system_loop();
 
