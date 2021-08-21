@@ -14,14 +14,14 @@
 
 int main(int argc, char **argv)
 {
-    struct pinint button_pinint = PININT_AVR_MAKE(INT1);
-    struct pin button_pin = PIN_AVR_MAKE(D, 1);
-    struct pin led_pin = PIN_AVR_MAKE(D, 0);
+    struct pinint button_pinint = PININT_AVR_MAKE(INT2);
+    struct pin button_pin = PIN_AVR_MAKE(C, 6);
+    struct pin led_pin = PIN_AVR_MAKE(C, 6);
     struct blinky blinky;
 
     struct pin din = PIN_AVR_MAKE(B, 2);
     struct pin clk = PIN_AVR_MAKE(B, 1);
-    struct pin csn = PIN_AVR_MAKE(D, 2);
+    struct pin csn = PIN_AVR_MAKE(F, 0);
     struct spi spi;
     struct as1107 as1107;
     struct display display;
