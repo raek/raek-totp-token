@@ -1,4 +1,5 @@
 #include <avr/interrupt.h>
+#include <stdint.h>
 
 #include "list.h"
 #include "actor_avr.h"
@@ -13,7 +14,9 @@ static void activate(struct timer *timer, timer_instant target, bool repeating, 
 
 void timer_system_init(void)
 {
-    now = 0;
+    // Initialize to 10 seconds before rollover to make sure that
+    // rollover is excercised regurlarly
+    now = UINT32_MAX - (10UL * TIMER_FREQUENCY_HZ);
     INIT_LIST_HEAD(&active_timers);
 
     // Configure CTC mode
@@ -62,7 +65,7 @@ void timer_set_fixed_count(struct timer *timer, timer_duration interval, int cou
     if (count > 0) {
         activate(timer, target, true, interval, true, count);
     }
-    sei();   
+    sei();
 }
 
 void timer_cancel(struct timer *timer)
