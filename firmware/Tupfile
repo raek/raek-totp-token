@@ -27,7 +27,7 @@ HOST_CFLAGS = -fpic `$(PYTHON) get_python_cflags.py` -DCFFI
 
 
 common_sources =  datetime.c sha1.c hmac_sha1.c hotp.c font.c
-common_sources += blinky.c spi_bitbang.c as1107.c display_as1107.c debug_common.c
+common_sources += blinky.c app.c spi_bitbang.c as1107.c display_as1107.c debug_common.c
 
 
 
