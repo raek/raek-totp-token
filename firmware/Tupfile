@@ -26,7 +26,7 @@ HOST_CFLAGS = -fpic `$(PYTHON) get_python_cflags.py` -DCFFI
 
 
 
-common_sources =  datetime.c sha1.c hmac_sha1.c hotp.c font.c
+common_sources =  datetime.c format.c sha1.c hmac_sha1.c hotp.c font.c
 common_sources += blinky.c app.c spi_bitbang.c as1107.c display_as1107.c debug_common.c
 
 
@@ -58,6 +58,6 @@ cffi_headers = pure_cffi.h blinky.h spi_bitbang.h
 : foreach $(common_sources) |> !cc_host_coverage |> %B.host.o
 : foreach $(host_sources)   |> !cc_host          |> %B.host.o
 
-: pure_cffi.host.o debug_common.host.o debug_host.host.o datetime.host.o sha1.host.o hmac_sha1.host.o hotp.host.o font.host.o |> !so_host |> pure_cffi.so
+: pure_cffi.host.o debug_common.host.o debug_host.host.o datetime.host.o format.host.o sha1.host.o hmac_sha1.host.o hotp.host.o font.host.o |> !so_host |> pure_cffi.so
 : blinky_cffi.host.o blinky.host.o debug_common.host.o debug_host.host.o |> !so_host |> blinky_cffi.so
 : spi_bitbang_cffi.host.o spi_bitbang.host.o debug_common.host.o debug_host.host.o |> !so_host |> spi_bitbang_cffi.so

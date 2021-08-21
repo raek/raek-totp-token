@@ -1,5 +1,6 @@
 #include "result.h"
 #include "datetime.h"
+#include "format.h"
 #include "sha1.h"
 #include "hmac_sha1.h"
 #include "hotp.h"

@@ -1,4 +1,5 @@
 #include "hotp.h"
+#include "format.h"
 
 static uint32_t dynamic_truncation(const uint8_t *hash);
 static void write_u64be(uint8_t *buffer, uint64_t value);
@@ -12,10 +13,7 @@ void hotp(struct hotp *scratchpad, const uint8_t *secret, size_t secret_length, 
               scratchpad->counter_bytes, HOTP_COUNTER_BYTES,
               scratchpad->hmac_sha1_code);
     uint32_t dt = dynamic_truncation(scratchpad->hmac_sha1_code);
-    for (int i = HOTP_DIGITS - 1; i >= 0; i--) {
-        digits_output[i] = '0' + (dt % 10);
-        dt /= 10;
-    }
+    format_decimal(digits_output, HOTP_DIGITS, dt, '0');
 }
 
 static uint32_t dynamic_truncation(const uint8_t *hash)

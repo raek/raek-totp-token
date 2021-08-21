@@ -63,6 +63,12 @@ def datetime_to_unix_time(year: int, month: int, day: int, hour: int, minute: in
         return None
 
 
+def format_decimal(width: int, value: int, padding: str) -> str:
+    output = pure_cffi.ffi.new("char[]", width)
+    pure_cffi.lib.format_decimal(output, width, value, padding.encode("ascii"))
+    return cast(bytes, pure_cffi.ffi.string(output)).decode("ascii")
+
+
 class Sha1:
     def __init__(self) -> None:
         self._cdata = pure_cffi.ffi.new("struct sha1 *")
