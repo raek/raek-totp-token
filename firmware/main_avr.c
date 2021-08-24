@@ -15,7 +15,7 @@
 int main(int argc, char **argv)
 {
     struct pinint button_pinint = PININT_AVR_MAKE(INT2);
-    struct pin button_pin = PIN_AVR_MAKE(C, 6);
+    struct pin button_pin = PIN_AVR_MAKE(D, 2);
     struct pin led_pin = PIN_AVR_MAKE(C, 6);
     struct blinky blinky;
 
