@@ -14,6 +14,7 @@ void debug_init(void)
               (0<<USBS1) |
               (1<<UCSZ11) | (1<<UCSZ10) |
               (0<<UCPOL1));
+    debug_put_string("\r\nbooted\r\n");
 }
 
 void debug_put_char(char c)
