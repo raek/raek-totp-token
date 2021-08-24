@@ -79,15 +79,15 @@ void actor_system_loop(void)
             sei();
             sleep_cpu();
             PORTC |= (1<<7);
-            continue;
-        }
-        struct actor *recipient = msg->recipient;
-        actor_sig sig = msg->sig;
-        push_msg(&free_msgs, msg);
-        sei();
-        enum result result = recipient->dispatcher(recipient, sig);
-        if (result != RESULT_OK) {
-            halt();
+        } else {
+            struct actor *recipient = msg->recipient;
+            actor_sig sig = msg->sig;
+            push_msg(&free_msgs, msg);
+            sei();
+            enum result result = recipient->dispatcher(recipient, sig);
+            if (result != RESULT_OK) {
+                halt();
+            }
         }
     }
 }
