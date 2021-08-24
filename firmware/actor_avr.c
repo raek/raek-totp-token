@@ -68,6 +68,7 @@ static inline void post(struct actor *recipient, actor_sig sig)
 void actor_system_loop(void)
 {
     DDRC |= (1<<7);
+    DDRD |= (1<<6);
     PORTC |= (1<<7);
     for (;;) {
         cli();
@@ -84,10 +85,12 @@ void actor_system_loop(void)
             actor_sig sig = msg->sig;
             push_msg(&free_msgs, msg);
             sei();
+            PORTD |= (1<<6);
             enum result result = recipient->dispatcher(recipient, sig);
             if (result != RESULT_OK) {
                 halt();
             }
+            PORTD &= ~(1<<6);
         }
     }
 }
