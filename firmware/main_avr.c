@@ -7,6 +7,7 @@
 #include "debug.h"
 #include "display.h"
 #include "display_as1107.h"
+#include "i2c_avr.h"
 #include "pin_avr.h"
 #include "pinint_avr.h"
 #include "spi_bitbang.h"
@@ -41,6 +42,7 @@ int main(int argc, char **argv)
     actor_system_init();
     timer_system_init();
     pinint_system_init();
+    i2c_system_init();
     blinky_init(&blinky, &button_pinint, &button_pin, &led_pin);
     app_init(&app, &display);
     actor_system_loop();

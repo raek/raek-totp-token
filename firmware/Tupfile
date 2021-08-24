@@ -31,7 +31,7 @@ common_sources += blinky.c app.c spi_bitbang.c as1107.c display_as1107.c debug_c
 
 
 
-avr_sources = result.c halt_avr.c actor_avr.c timer_avr.c pin_avr.c pinint_avr.c debug_avr.c
+avr_sources = result.c halt_avr.c actor_avr.c timer_avr.c pin_avr.c pinint_avr.c debug_avr.c i2c_avr.c
 avr_main_sources = main_avr.c
 
 : foreach $(common_sources) $(avr_sources) |> !cc_avr |> %B.avr.o {avr_objects}

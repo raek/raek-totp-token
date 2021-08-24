@@ -2,7 +2,10 @@
 
 #include "actor.h"
 #include "app.h"
+#include "debug.h"
 #include "display.h"
+#include "halt.h"
+#include "i2c.h"
 #include "timer.h"
 
 #define ANIMATION_TICK_PERIOD 50
@@ -31,6 +34,19 @@ void app_init(struct app *app, struct display *display)
     app->state = STATE_BLANK;
     display_blank(app->display);
     timer_set_repeating(&app->animation_timer, ANIMATION_TICK_PERIOD);
+    enum result result;
+    uint8_t offset = 0;
+    result = i2c_write(0x68, &offset, 1);
+    if (result != RESULT_OK) {
+        halt();
+    }
+    uint8_t data[0x13];
+    memset(data, 0, sizeof(data));
+    result = i2c_read(0x68, data, sizeof(data));
+    if (result != RESULT_OK) {
+        halt();
+    }
+    debug_dump_hex("rtc registers", data, sizeof(data));
 }
 
 enum result app_dispatch(struct actor *actor, actor_sig sig)
